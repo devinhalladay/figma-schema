@@ -1,0 +1,19 @@
+.panel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.panelEnter {
+  left: 0;
+}
+.panelEnterActive {
+  left: 300px;
+  transition: left 200ms;
+}
+.panelExit {
+  left: 300px
+}
+.panelExitActive {
+  left: 0;
+  transition: left 200ms;
+}
