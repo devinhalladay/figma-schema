@@ -1,4 +1,8 @@
-# figma-hello-world
+# Schema — Intelligent Placeholder Generator
+
+Schema is a plugin for Figma that helps designers generate more realistic placeholder text. There are a few plugins available already that do similar things, but I wanted a plugin that would let me do more advanced things like date/time sequences, interpolating variables, and using custom scripts to generate copy.
+
+It's mainly here to scratch my own itch and learn to create Figma plugins, but I'll hopefully push it to production soon.
 
 ## Development guide
 
@@ -25,7 +29,7 @@ To watch for code changes and rebuild the plugin automatically:
 $ npm run watch
 ```
 
-### Install the plugin
+### Install the development plugin
 
 In the Figma desktop app:
 
