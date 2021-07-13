@@ -70,7 +70,7 @@ export default function () {
 
   // on('SUBMIT', handleSubmit)
   on("GENERATE_RANDOM_NAME", randomName);
-  on("GENERATE_RANDOM_TIME", () => randomTime(1626056227));
+  on("GENERATE_RANDOM_TIME", () => randomTime(1626138000));
 
   showUI(options, data);
 }

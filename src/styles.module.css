@@ -28,6 +28,10 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  animation: 300ms moveIn;
+  background-color: #fff;
+  z-index: 100;
+  border-left: 1px solid #e5e5e5;
 }
 .panelEnter {
   left: 0;
@@ -35,6 +39,7 @@
 .panelEnterActive {
   left: 300px;
   transition: left 200ms;
+  animation: 300ms moveOut;
 }
 .panelExit {
   left: 300px
@@ -42,4 +47,47 @@
 .panelExitActive {
   left: 0;
   transition: left 200ms;
+  animation: 300ms moveIn;
+}
+
+
+@keyframes moveIn {
+  0% {
+    left: 320px;
+  }
+  100% {
+    left: 0px;
+  }
+}
+
+@keyframes moveOut {
+  0% {
+    left: 0px;
+  }
+  100% {
+    left: 320px;
+  }
+}
+
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+}
+
+.backIcon {
+  margin-right: 8px;
+  display: block;
+}
+
+.inlineCenter {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.flexAlignRight {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
