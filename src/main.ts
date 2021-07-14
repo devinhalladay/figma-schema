@@ -36,25 +36,44 @@ export default function () {
     replaceSelectedNodesContent(name);
   }
 
+  function setMeridiem(time, newMeridiem) {
+    // if (!newMeridiem) {
+    //   return time.format("A"); // or `return this.hours() < 12 ? 'AM' : 'PM';`
+    // }
+    if (newMeridiem.toUpperCase() === "AM" && time.hours() >= 12) {
+      time.hours(time.hours() - 12);
+    } else if (
+      newMeridiem.toUpperCase() === "PM" &&
+      time.hours() < 12
+    ) {
+      time.hours(time.hours() + 12);
+    }
+
+    return time;
+  }
+
   function randomTime(data) {
     console.log(data);
 
-    const today = moment()
+    const today = moment();
 
-    let interval = data.interval.replace(/\D/g,'');
+    let interval = data.interval.replace(/\D/g, "");
 
     // let start = moment(`${today}, ${}:${data.time.minute} ${data.amPm}`)
-    const start = moment().hour(data.time.hour).minute(data.time.minute)
+    let start = moment()
+      .hour(data.time.hour)
+      .minute(data.time.minute);
     
+    start = setMeridiem(start, data.amPm)
     
-    // const timeString = moment(time).format('LT');
+      
     const nodes = getSelectedNodesOrAllNodes();
 
-    var startTime = moment(start).format("LT")
+    let startTime = moment(start).format("LT");
+    console.log(data.amPm);
+    console.log(start);
+    
 
-    console.log(startTime);
-    
-    
 
     var timeStops = [startTime];
 
