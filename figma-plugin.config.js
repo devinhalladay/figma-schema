@@ -4,7 +4,7 @@ module.exports = (webpackConfig) => ({
     ...webpackConfig.resolve,
     alias: {
       ...webpackConfig.resolve.alias,
-      react: "preact/compat",
+      "react": "preact/compat",
       "react-dom": "preact/compat",
     },
   },

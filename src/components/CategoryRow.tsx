@@ -11,18 +11,20 @@ import styles from "../styles.module.css";
 interface ICategoryRow {
   panel: PanelData;
   setOpenPanel: any;
+  icon: any;
 }
 
 export default function CategoryRow({
   panel,
   setOpenPanel,
+  icon,
 }: ICategoryRow) {
   return (
     <Container onClick={() => setOpenPanel(panel)}>
       <VerticalSpace space="medium" />
       <div className={styles.row}>
         <div className={styles.inlineCenter}>
-          <div className={styles.box}></div>
+          <div className={styles.box}>{icon}</div>
           <Stack space="extraSmall">
             <Text bold>{panel.name}</Text>
             <Text muted>{panel.summary}</Text>
