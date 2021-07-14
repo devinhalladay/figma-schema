@@ -6,10 +6,11 @@ export default function LabeledSwitch({
   title,
   handleChange,
   subtitle,
+  value,
 }) {
   return (
     <div className={styles.inlineCenter}>
-      <Toggle onChange={handleChange} value={true} />
+      <Toggle onChange={handleChange} value={value} />
       <span
         style={{
           marginRight: 8,

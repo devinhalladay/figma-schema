@@ -167,18 +167,19 @@ function CategoryTitle({ panel }) {
 
 function NamePanel({ show, setOpenPanel }) {
   const options: Array<DropdownOption> = [
-    { value: "Neutral" },
+    { value: "Any" },
     { value: "Male" },
     { value: "Female" },
   ];
 
-  const [value, setValue] = useState("Neutral");
-
-  function handleChange(event: JSX.TargetedEvent<HTMLInputElement>) {
-    const newValue = event.currentTarget.value;
-    console.log(newValue);
-    setValue(newValue);
-  }
+  const [genderValue, setGenderValue] = useState("Any");
+  const [nameOptions, setNameOptions] = useState({
+    gender: "Any",
+    firstName: true,
+    // middleName: false,
+    lastName: true,
+    lastInitial: "Full",
+  });
 
   const lnOptions: Array<SegmentedControlOption> = [
     { value: "Full" },
@@ -189,7 +190,8 @@ function NamePanel({ show, setOpenPanel }) {
     <Panel
       show={show}
       setOpenPanel={setOpenPanel}
-      panel={Panels.NAMES}>
+      panel={Panels.NAMES}
+      eventArgs={nameOptions}>
       <CategoryTitle panel={Panels.NAMES} />
 
       <VerticalSpace space="medium" />
@@ -198,11 +200,16 @@ function NamePanel({ show, setOpenPanel }) {
       <div className={styles.main}>
         <VerticalSpace space="medium" />
         <Container>
-          <LabeledInputGroup title="Name type">
+          <LabeledInputGroup title="Gender association">
             <Dropdown
-              onChange={handleChange}
+              onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+                setNameOptions({
+                  ...nameOptions,
+                  gender: e.currentTarget.value,
+                })
+              }
               options={options}
-              value={value}
+              value={nameOptions.gender}
             />
           </LabeledInputGroup>
 
@@ -212,30 +219,53 @@ function NamePanel({ show, setOpenPanel }) {
           <LabeledSwitch
             title="First name"
             subtitle="eg. Kennedy"
-            handleChange={handleChange}
+            handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+              setNameOptions({
+                ...nameOptions,
+                firstName: e.currentTarget.checked,
+              })
+            }
+            value={nameOptions.firstName}
           />
 
           <VerticalSpace space="small" />
 
-          <LabeledSwitch
+          {/* <LabeledSwitch
             title="Middle initial"
             subtitle="eg. G."
-            handleChange={handleChange}
+            handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+              setNameOptions({
+                ...nameOptions,
+                middleName: e.currentTarget.checked,
+              })
+            }
+            value={nameOptions.middleName}
           />
 
-          <VerticalSpace space="small" />
+          <VerticalSpace space="small" /> */}
 
           <LabeledSwitch
             title="Last name"
             subtitle="eg. Morocco"
-            handleChange={handleChange}
+            handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+              setNameOptions({
+                ...nameOptions,
+                lastName: e.currentTarget.checked,
+              })
+            }
+            value={nameOptions.lastName}
           />
 
           <VerticalSpace space="extraSmall" />
           <SegmentedControl
-            onChange={handleChange}
             options={lnOptions}
-            value={"Full"}
+            value={nameOptions.lastInitial}
+            onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+              setNameOptions({
+                ...nameOptions,
+                lastInitial: e.currentTarget.value,
+              })
+            }
           />
         </Container>
       </div>
