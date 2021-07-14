@@ -1,29 +1,27 @@
 import {
-  render,
   Container,
-  Text,
-  VerticalSpace,
-  Button,
-  Textbox,
-  Stack,
-  Inline,
   Divider,
-  IconButton,
-  IconNavigateBack32,
-  IconArrowLeftCircle32,
   Dropdown,
-  Toggle,
-  SegmentedControlOption,
-  SegmentedControl,
   DropdownOption,
+  render,
+  SegmentedControl,
+  SegmentedControlOption,
+  Stack,
+  Text,
   TextboxNumeric,
+  Toggle,
+  VerticalSpace,
 } from "@create-figma-plugin/ui";
-import { emit, on } from "@create-figma-plugin/utilities";
-import { h, JSX, Fragment, createContext } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { emit } from "@create-figma-plugin/utilities";
+import { createContext, Fragment, h, JSX } from "preact";
+import { useState } from "preact/hooks";
+import HorizontalSpace from "./components/HorizontalSpace";
+import LabeledInputGroup from "./components/LabeledInputGroup";
+import LabeledSwitch from "./components/LabeledSwitch";
+import Panel from "./components/Panel";
+import { PanelData, Panels } from "./constants";
 import styles from "./styles.module.css";
-import { Panels, PanelData } from "./constants";
-import { panel } from "./styles.css";
+import CategoryRow from "./components/CategoryRow";
 
 interface PanelContextProps {
   panel: PanelData | null;
@@ -32,49 +30,6 @@ interface PanelContextProps {
 const PanelContext = createContext<Partial<PanelContextProps>>({
   panel: null,
 });
-
-function Panel({ show, setOpenPanel, panel, eventArgs, children }) {
-  const [render, setRender] = useState(show);
-
-  useEffect(() => {
-    if (show) setRender(true);
-  }, [show]);
-
-  const onAnimationEnd = () => {
-    if (!show) setRender(false);
-  };
-
-  return (
-    render && (
-      <div
-        className={
-          show
-            ? `${styles.panelExitActive} ${styles.panel}`
-            : `${styles.panelEnterActive} ${styles.panel}`
-        }
-        onAnimationEnd={onAnimationEnd}>
-        <div className={styles.container}>
-          <PanelNavbar setOpenPanel={setOpenPanel} />
-          <div className={styles.main}>{children}</div>
-          <Divider />
-          <Container space="small">
-            <VerticalSpace space="extraSmall" />
-            <div className={styles.flexAlignRight}>
-              <Button onClick={() => emit(panel.event, eventArgs)}>
-                Generate
-              </Button>
-            </div>
-            <VerticalSpace space="extraSmall" />
-          </Container>
-        </div>
-      </div>
-    )
-  );
-}
-
-function HorizontalSpace({ space = "small", ...rest }) {
-  return <div className={styles[space]} {...rest}></div>;
-}
 
 function TimesPanel({ show, setOpenPanel }) {
   const [showStartTime, setShowStartTime] = useState(true);
@@ -194,72 +149,6 @@ function TimesPanel({ show, setOpenPanel }) {
   );
 }
 
-function LabeledSwitch({ title, handleChange, subtitle }) {
-  return (
-    <div className={styles.inlineCenter}>
-      <Toggle onChange={handleChange} value={true} />
-      <span
-        style={{
-          marginRight: 8,
-        }}></span>
-      <Text>{title}</Text>
-      <span
-        style={{
-          marginRight: 8,
-        }}></span>
-      <Text muted>{subtitle}</Text>
-    </div>
-  );
-}
-
-function PanelNavbar({ setOpenPanel }) {
-  return (
-    <>
-      <Container>
-        <VerticalSpace space="small" />
-        <button
-          className={styles.panelHeader}
-          onClick={() => setOpenPanel(null)}>
-          <svg
-            className={styles.backIcon}
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0)">
-              <path
-                d="M1.7072 4L4.3536 6.6464L3.6465 7.3535L-0.207031 3.5L3.6465 -0.353577L4.3536 0.353504L1.7072 3H5.5001C9.0762 3 12.0001 5.9238 12.0001 9.5V11H11.0001V9.5C11.0001 6.4761 8.5239 4 5.5001 4H1.7072Z"
-                fill="#333333"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0">
-                <rect width="12" height="12" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <Text>Back</Text>
-        </button>
-        <VerticalSpace space="small" />
-      </Container>
-      <Divider />
-      <VerticalSpace space="medium" />
-    </>
-  );
-}
-
-function LabeledInputGroup({ title, children }) {
-  return (
-    <>
-      <Text bold>{title}</Text>
-      <VerticalSpace space="small" />
-      {children}
-      <VerticalSpace space="medium" />
-    </>
-  );
-}
-
 function CategoryTitle({ panel }) {
   return (
     <Container>
@@ -355,46 +244,7 @@ function NamePanel({ show, setOpenPanel }) {
 }
 
 function Plugin(props: { greeting: string }) {
-  const [show, setShow] = useState(false);
-
-  const [showNameOptions, setShowNameOptions] = useState(false);
-
   const [openPanel, setOpenPanel] = useState<null | PanelData>(null);
-
-  function handleClick() {
-    emit("SUBMIT", props);
-  }
-
-  function handleInput(event: JSX.TargetedEvent<HTMLInputElement>) {
-    const newValue = event.currentTarget.value;
-    console.log(newValue);
-    // setValue(newValue);
-  }
-
-  function renderRow(panel: PanelData) {
-    return (
-      <Container onClick={() => setOpenPanel(panel)}>
-        <VerticalSpace space="medium" />
-        <div className={styles.row}>
-          <div className={styles.inlineCenter}>
-            <div className={styles.box}></div>
-            <Stack space="extraSmall">
-              <Text bold>{panel.name}</Text>
-              <Text muted>{panel.summary}</Text>
-            </Stack>
-          </div>
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 11L19 16L14 21" stroke="#B2B2B2" />
-          </svg>
-        </div>
-      </Container>
-    );
-  }
 
   return (
     <PanelContext.Provider
@@ -430,12 +280,16 @@ function Plugin(props: { greeting: string }) {
             <VerticalSpace space="extraLarge" />
           </Container>
 
-          {renderRow(Panels.NAMES)}
-          {renderRow(Panels.TIMES)}
-        </div>
+          <CategoryRow
+            panel={Panels.NAMES}
+            setOpenPanel={setOpenPanel}
+          />
 
-        {/* <Textbox onInput={handleInput} value={value} /> */}
-        {/* <VerticalSpace space="medium" /> */}
+          <CategoryRow
+            panel={Panels.TIMES}
+            setOpenPanel={setOpenPanel}
+          />
+        </div>
       </div>
     </PanelContext.Provider>
   );
