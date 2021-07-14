@@ -15,13 +15,25 @@ import {
   Toggle,
   SegmentedControlOption,
   SegmentedControl,
+  DropdownOption,
+  TextboxNumeric,
 } from "@create-figma-plugin/ui";
 import { emit, on } from "@create-figma-plugin/utilities";
-import { h, JSX, Fragment } from "preact";
+import { h, JSX, Fragment, createContext } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import styles from "./styles.module.css";
+import { Panels, PanelData } from "./constants";
+import { panel } from "./styles.css";
 
-function Panel({ show, children }) {
+interface PanelContextProps {
+  panel: PanelData | null;
+}
+
+const PanelContext = createContext<Partial<PanelContextProps>>({
+  panel: null,
+});
+
+function Panel({ show, setOpenPanel, panel, eventArgs, children }) {
   const [render, setRender] = useState(show);
 
   useEffect(() => {
@@ -41,36 +53,237 @@ function Panel({ show, children }) {
             : `${styles.panelEnterActive} ${styles.panel}`
         }
         onAnimationEnd={onAnimationEnd}>
-        {children}
+        <div className={styles.container}>
+          <PanelNavbar setOpenPanel={setOpenPanel} />
+          <div className={styles.main}>{children}</div>
+          <Divider />
+          <Container space="small">
+            <VerticalSpace space="extraSmall" />
+            <div className={styles.flexAlignRight}>
+              <Button onClick={() => emit(panel.event, eventArgs)}>
+                Generate
+              </Button>
+            </div>
+            <VerticalSpace space="extraSmall" />
+          </Container>
+        </div>
       </div>
     )
   );
 }
 
-function Plugin(props: { greeting: string }) {
-  const [show, setShow] = useState(false);
+function HorizontalSpace({ space = "small", ...rest }) {
+  return <div className={styles[space]} {...rest}></div>;
+}
 
-  function handleClick() {
-    emit("SUBMIT", props);
-  }
+function TimesPanel({ show, setOpenPanel }) {
+  const [showStartTime, setShowStartTime] = useState(true);
+  const [startTime, setStartTime] = useState({
+    time: {
+      hour: "10",
+      minute: "00",
+    },
+    amPm: "AM",
+  });
 
-  function handleRowClick(emitter: string) {
-    setShow(true);
-    // emit(emitter, props);
-  }
+  const [interval, setInterval] = useState("30 mins");
 
-  function handleInput(event: JSX.TargetedEvent<HTMLInputElement>) {
+  function handleIntervalChange(
+    event: JSX.TargetedEvent<HTMLInputElement>
+  ) {
     const newValue = event.currentTarget.value;
-    console.log(newValue);
-    setValue(newValue);
+
+    setInterval(newValue);
   }
 
-  const [value, setValue] = useState("Neutral");
+  function handleAmPmChange(
+    event: JSX.TargetedEvent<HTMLInputElement>
+  ) {
+    const newValue = event.currentTarget.value;
+
+    setStartTime({
+      ...startTime,
+      amPm: newValue,
+    });
+  }
+
+  const amPmOptions: Array<SegmentedControlOption> = [
+    { value: "AM" },
+    { value: "PM" },
+  ];
+
+  function handleChangeHour(
+    event: JSX.TargetedEvent<HTMLInputElement>
+  ) {
+    const newValue = event.currentTarget.value;
+
+    setStartTime({
+      ...startTime,
+      time: {
+        ...startTime.time,
+        hour: newValue,
+      },
+    });
+  }
+
+  function handleChangeMinute(
+    event: JSX.TargetedEvent<HTMLInputElement>
+  ) {
+    const newValue = event.currentTarget.value;
+
+    setStartTime({
+      ...startTime,
+      time: {
+        ...startTime.time,
+        minute: newValue,
+      },
+    });
+  }
+
+  return (
+    <Panel
+      show={show}
+      setOpenPanel={setOpenPanel}
+      panel={Panels.TIMES}
+      eventArgs={{ ...startTime, interval: interval }}>
+      <CategoryTitle panel={Panels.TIMES} />
+
+      <div className={styles.main}>
+        <VerticalSpace space="medium" />
+        <Divider />
+        <VerticalSpace space="medium" />
+
+        <Container space="small">
+          <LabeledInputGroup title="Constraints">
+            <LabeledSwitch
+              title="Start time"
+              subtitle=""
+              handleChange={() => setShowStartTime}
+            />
+            <VerticalSpace space="small" />
+            <div className={styles.inlineCenter}>
+              <TextboxNumeric
+                onInput={handleChangeHour}
+                value={startTime.time.hour}
+              />
+              <HorizontalSpace space="small" />
+              <TextboxNumeric
+                onInput={handleChangeMinute}
+                value={startTime.time.minute}
+              />
+              <HorizontalSpace space="small" />
+              <SegmentedControl
+                onChange={handleAmPmChange}
+                options={amPmOptions}
+                value={startTime.amPm}
+              />
+            </div>
+          </LabeledInputGroup>
+
+          <LabeledInputGroup title="Interval">
+            <TextboxNumeric
+              onInput={handleIntervalChange}
+              value={interval}
+              suffix=" mins"
+              minimum={0}
+            />
+          </LabeledInputGroup>
+        </Container>
+      </div>
+    </Panel>
+  );
+}
+
+function LabeledSwitch({ title, handleChange, subtitle }) {
+  return (
+    <div className={styles.inlineCenter}>
+      <Toggle onChange={handleChange} value={true} />
+      <span
+        style={{
+          marginRight: 8,
+        }}></span>
+      <Text>{title}</Text>
+      <span
+        style={{
+          marginRight: 8,
+        }}></span>
+      <Text muted>{subtitle}</Text>
+    </div>
+  );
+}
+
+function PanelNavbar({ setOpenPanel }) {
+  return (
+    <>
+      <Container>
+        <VerticalSpace space="small" />
+        <button
+          className={styles.panelHeader}
+          onClick={() => setOpenPanel(null)}>
+          <svg
+            className={styles.backIcon}
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0)">
+              <path
+                d="M1.7072 4L4.3536 6.6464L3.6465 7.3535L-0.207031 3.5L3.6465 -0.353577L4.3536 0.353504L1.7072 3H5.5001C9.0762 3 12.0001 5.9238 12.0001 9.5V11H11.0001V9.5C11.0001 6.4761 8.5239 4 5.5001 4H1.7072Z"
+                fill="#333333"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0">
+                <rect width="12" height="12" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          <Text>Back</Text>
+        </button>
+        <VerticalSpace space="small" />
+      </Container>
+      <Divider />
+      <VerticalSpace space="medium" />
+    </>
+  );
+}
+
+function LabeledInputGroup({ title, children }) {
+  return (
+    <>
+      <Text bold>{title}</Text>
+      <VerticalSpace space="small" />
+      {children}
+      <VerticalSpace space="medium" />
+    </>
+  );
+}
+
+function CategoryTitle({ panel }) {
+  return (
+    <Container>
+      <div className={styles.row}>
+        <div className={styles.inlineCenter}>
+          <div className={styles.box}></div>
+          <Stack space="extraSmall">
+            <Text bold>{panel.name}</Text>
+            <Text muted>{panel.summary}</Text>
+          </Stack>
+        </div>
+      </div>
+    </Container>
+  );
+}
+
+function NamePanel({ show, setOpenPanel }) {
   const options: Array<DropdownOption> = [
     { value: "Neutral" },
     { value: "Male" },
     { value: "Female" },
   ];
+
+  const [value, setValue] = useState("Neutral");
 
   function handleChange(event: JSX.TargetedEvent<HTMLInputElement>) {
     const newValue = event.currentTarget.value;
@@ -78,20 +291,96 @@ function Plugin(props: { greeting: string }) {
     setValue(newValue);
   }
 
-  function renderRow(
-    name: string,
-    description: string,
-    emitter: string
-  ) {
+  const lnOptions: Array<SegmentedControlOption> = [
+    { value: "Full" },
+    { value: "Initial" },
+  ];
+
+  return (
+    <Panel
+      show={show}
+      setOpenPanel={setOpenPanel}
+      panel={Panels.NAMES}>
+      <CategoryTitle panel={Panels.NAMES} />
+
+      <VerticalSpace space="medium" />
+      <Divider />
+
+      <div className={styles.main}>
+        <VerticalSpace space="medium" />
+        <Container>
+          <LabeledInputGroup title="Name type">
+            <Dropdown
+              onChange={handleChange}
+              options={options}
+              value={value}
+            />
+          </LabeledInputGroup>
+
+          <Text bold>Options</Text>
+          <VerticalSpace space="small" />
+
+          <LabeledSwitch
+            title="First name"
+            subtitle="eg. Kennedy"
+            handleChange={handleChange}
+          />
+
+          <VerticalSpace space="small" />
+
+          <LabeledSwitch
+            title="Middle initial"
+            subtitle="eg. G."
+            handleChange={handleChange}
+          />
+
+          <VerticalSpace space="small" />
+
+          <LabeledSwitch
+            title="Last name"
+            subtitle="eg. Morocco"
+            handleChange={handleChange}
+          />
+
+          <VerticalSpace space="extraSmall" />
+          <SegmentedControl
+            onChange={handleChange}
+            options={lnOptions}
+            value={"Full"}
+          />
+        </Container>
+      </div>
+    </Panel>
+  );
+}
+
+function Plugin(props: { greeting: string }) {
+  const [show, setShow] = useState(false);
+
+  const [showNameOptions, setShowNameOptions] = useState(false);
+
+  const [openPanel, setOpenPanel] = useState<null | PanelData>(null);
+
+  function handleClick() {
+    emit("SUBMIT", props);
+  }
+
+  function handleInput(event: JSX.TargetedEvent<HTMLInputElement>) {
+    const newValue = event.currentTarget.value;
+    console.log(newValue);
+    // setValue(newValue);
+  }
+
+  function renderRow(panel: PanelData) {
     return (
-      <Container onClick={() => handleRowClick(emitter)}>
+      <Container onClick={() => setOpenPanel(panel)}>
         <VerticalSpace space="medium" />
         <div className={styles.row}>
           <div className={styles.inlineCenter}>
             <div className={styles.box}></div>
             <Stack space="extraSmall">
-              <Text bold>{name}</Text>
-              <Text muted>{description}</Text>
+              <Text bold>{panel.name}</Text>
+              <Text muted>{panel.summary}</Text>
             </Stack>
           </div>
           <svg
@@ -107,135 +396,20 @@ function Plugin(props: { greeting: string }) {
     );
   }
 
-  const lnOptions: Array<SegmentedControlOption> = [
-    { value: "Full" },
-    { value: "Initial" },
-  ];
-
   return (
-    <>
-      <Panel show={show}>
-        <div className={styles.container}>
-          <Container>
-            <VerticalSpace space="small" />
-            <button
-              className={styles.panelHeader}
-              onClick={() => setShow(false)}>
-              <svg
-                className={styles.backIcon}
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0)">
-                  <path
-                    d="M1.7072 4L4.3536 6.6464L3.6465 7.3535L-0.207031 3.5L3.6465 -0.353577L4.3536 0.353504L1.7072 3H5.5001C9.0762 3 12.0001 5.9238 12.0001 9.5V11H11.0001V9.5C11.0001 6.4761 8.5239 4 5.5001 4H1.7072Z"
-                    fill="#333333"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0">
-                    <rect width="12" height="12" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-              <Text>Back</Text>
-            </button>
-            <VerticalSpace space="small" />
-          </Container>
-          <Divider />
+    <PanelContext.Provider
+      value={{
+        panel: null,
+      }}>
+      <NamePanel
+        show={openPanel === Panels.NAMES}
+        setOpenPanel={setOpenPanel}
+      />
 
-          <Container>
-            <VerticalSpace space="medium" />
-            <div className={styles.row}>
-              <div className={styles.inlineCenter}>
-                <div className={styles.box}></div>
-                <Stack space="extraSmall">
-                  <Text bold>Names</Text>
-                  <Text muted>Male, Female, and Neutral</Text>
-                </Stack>
-              </div>
-            </div>
-          </Container>
-
-          <VerticalSpace space="small" />
-          <Divider />
-          <div className={styles.main}>
-            <VerticalSpace space="small" />
-            <Container>
-              <Text bold>Name type</Text>
-              <VerticalSpace space="extraSmall" />
-              <Dropdown
-                onChange={handleChange}
-                options={options}
-                value={value}
-              />
-              <VerticalSpace space="medium" />
-              <Text bold>Options</Text>
-              <VerticalSpace space="small" />
-              <div className={styles.inlineCenter}>
-                <Toggle onChange={handleChange} value={true} />
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text>First name</Text>
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text muted>eg. Kennedy</Text>
-              </div>
-              <VerticalSpace space="small" />
-              <div className={styles.inlineCenter}>
-                <Toggle onChange={handleChange} value={false} />
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text>Middle initial</Text>
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text muted>eg. G.</Text>
-              </div>
-              <VerticalSpace space="small" />
-              <div className={styles.inlineCenter}>
-                <Toggle onChange={handleChange} value={false} />
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text>Last name</Text>
-                <span
-                  style={{
-                    marginRight: 8,
-                  }}></span>
-                <Text muted>eg. Morocco.</Text>
-              </div>
-              <VerticalSpace space="extraSmall" />
-              <SegmentedControl
-                onChange={handleChange}
-                options={lnOptions}
-                value={"Full"}
-              />
-            </Container>
-          </div>
-
-          <Divider />
-          <Container space="small">
-            <VerticalSpace space="extraSmall" />
-            <div className={styles.flexAlignRight}>
-              <Button onClick={() => emit("GENERATE_RANDOM_NAME")}>
-                Generate
-              </Button>
-            </div>
-            <VerticalSpace space="extraSmall" />
-          </Container>
-        </div>
-      </Panel>
+      <TimesPanel
+        show={openPanel === Panels.TIMES}
+        setOpenPanel={setOpenPanel}
+      />
 
       <div className={styles.container}>
         <div className={styles.main}>
@@ -256,22 +430,14 @@ function Plugin(props: { greeting: string }) {
             <VerticalSpace space="extraLarge" />
           </Container>
 
-          {renderRow(
-            "Names",
-            "Male, Female, and Neutral",
-            "GENERATE_RANDOM_NAME"
-          )}
-          {renderRow(
-            "Times",
-            "Spaced, Random, and Time Zones",
-            "GENERATE_RANDOM_TIME"
-          )}
+          {renderRow(Panels.NAMES)}
+          {renderRow(Panels.TIMES)}
         </div>
 
         {/* <Textbox onInput={handleInput} value={value} /> */}
         {/* <VerticalSpace space="medium" /> */}
       </div>
-    </>
+    </PanelContext.Provider>
   );
 }
 

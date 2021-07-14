@@ -36,18 +36,31 @@ export default function () {
     replaceSelectedNodesContent(name);
   }
 
-  function randomTime(start: Date | number) {    
-  
+  function randomTime(data) {
+    console.log(data);
+
+    const today = moment()
+
+    let interval = data.interval.replace(/\D/g,'');
+
+    // let start = moment(`${today}, ${}:${data.time.minute} ${data.amPm}`)
+    const start = moment().hour(data.time.hour).minute(data.time.minute)
+    
+    
     // const timeString = moment(time).format('LT');
     const nodes = getSelectedNodesOrAllNodes();
 
-    var startTime = moment(start, "LT");
+    var startTime = moment(start).format("LT")
 
-    var timeStops = [];
+    console.log(startTime);
+    
+    
+
+    var timeStops = [startTime];
 
     for (let i = 0; i < nodes.length; i++) {
-      timeStops.push(moment(startTime).format("LT"));
-      startTime.add(15, "minutes");
+      let newTime = start.add(interval, "minutes").format("LT");
+      timeStops.push(newTime);
     }
 
     console.log(timeStops);
@@ -69,8 +82,8 @@ export default function () {
   // }
 
   // on('SUBMIT', handleSubmit)
-  on("GENERATE_RANDOM_NAME", randomName);
-  on("GENERATE_RANDOM_TIME", () => randomTime(1626138000));
+  on("GENERATE_RANDOM_NAMES", randomName);
+  on("GENERATE_RANDOM_TIMES", randomTime);
 
   showUI(options, data);
 }

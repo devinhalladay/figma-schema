@@ -31,8 +31,10 @@
   animation: 300ms moveIn;
   background-color: #fff;
   z-index: 100;
-  border-left: 1px solid #e5e5e5;
+  overflow: hidden;
+  border-radius: 4px;
 }
+
 .panelEnter {
   left: 0;
 }
@@ -90,4 +92,24 @@
   display: flex;
   width: 100%;
   justify-content: flex-end;
+}
+
+.extraSmall {
+  width: var(--space-extra-small);
+}
+
+.small {
+  width: var(--space-small);
+}
+
+.medium {
+  width: var(--space-medium);
+}
+
+.large {
+  width: var(--space-large);
+}
+
+.extraLarge {
+  width: var(--space-extra-large);
 }
