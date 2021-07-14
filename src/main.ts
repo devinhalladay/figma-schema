@@ -16,7 +16,7 @@ export default function () {
     content: string | number | string[]
   ) {
     let nodes = getSelectedNodesOrAllNodes();
-    nodes = sortNodesByCanonicalOrder(nodes).reverse();
+    // nodes = sortNodesByCanonicalOrder(nodes).reverse();
 
     nodes.forEach((node, i) => {
       if (node.type === "TEXT") {
@@ -37,9 +37,6 @@ export default function () {
   }
 
   function setMeridiem(time, newMeridiem) {
-    // if (!newMeridiem) {
-    //   return time.format("A"); // or `return this.hours() < 12 ? 'AM' : 'PM';`
-    // }
     if (newMeridiem.toUpperCase() === "AM" && time.hours() >= 12) {
       time.hours(time.hours() - 12);
     } else if (
@@ -53,27 +50,19 @@ export default function () {
   }
 
   function randomTime(data) {
-    console.log(data);
-
-    const today = moment();
-
     let interval = data.interval.replace(/\D/g, "");
 
-    // let start = moment(`${today}, ${}:${data.time.minute} ${data.amPm}`)
     let start = moment()
       .hour(data.time.hour)
       .minute(data.time.minute);
-    
-    start = setMeridiem(start, data.amPm)
-    
-      
+
+    start = setMeridiem(start, data.amPm);
+
     const nodes = getSelectedNodesOrAllNodes();
 
     let startTime = moment(start).format("LT");
     console.log(data.amPm);
     console.log(start);
-    
-
 
     var timeStops = [startTime];
 
