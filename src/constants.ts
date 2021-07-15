@@ -15,16 +15,16 @@ export const Panels = {
     summary: "Male, Female, and Neutral",
     event: "GENERATE_RANDOM_NAMES",
   },
-  CUSTOM_LIST: {
+  COMPONENT_VARIABLES: {
     name: "Component Variables",
     summary: "Fill multiple variables",
-    event: "GET_SELECTED_TEXT_LAYERS"
+    event: "GET_COMPONENT_VARIABLES"
   },
-  // CUSTOM_LIST: {
-  //   name: "Create a custom list",
-  //   summary: "Add a list of your own content",
-  //   event: "GET_SELECTED_TEXT_LAYERS"
-  // },
+  CUSTOM_LIST: {
+    name: "Create a custom list",
+    summary: "Add a list of your own content",
+    event: "GET_CUSTOM_LIST"
+  },
   TIMES: {
     name: "Times",
     summary: "Spaced, Random, and Time Zones",

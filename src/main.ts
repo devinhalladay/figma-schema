@@ -197,8 +197,8 @@ export default function () {
 
   on(Panels.NAMES.event, randomName);
   on(Panels.TIMES.event, generateTimeTable);
-  on(Panels.CUSTOM_LIST.event, generateMultiple);
-  on("GET_SELECTED_TEXT_LAYERS", getSelectedTextNodes);
+  on(Panels.CUSTOM_LIST.event, generateCustomList);
+  on(Panels.COMPONENT_VARIABLES.event, generateMultiple);
 
   showUI(options, data);
 }

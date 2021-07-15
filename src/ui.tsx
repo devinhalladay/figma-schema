@@ -321,7 +321,7 @@ function NamePanel({ show, setOpenPanel, icon }) {
   );
 }
 
-function CustomListPanel({ show, setOpenPanel, icon }) {
+function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
   const [options, setOptions] = useState({ value: "", nodes: [] });
 
   const typeOptions: Array<DropdownOption> = [
@@ -359,10 +359,10 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
     <Panel
       show={show}
       setOpenPanel={setOpenPanel}
-      panel={Panels.CUSTOM_LIST}
+      panel={Panels.COMPONENT_VARIABLES}
       eventArgs={options}>
       <CategoryTitle
-        panel={Panels.CUSTOM_LIST}
+        panel={Panels.COMPONENT_VARIABLES}
         icon={
           <svg
             width="24"
@@ -462,6 +462,35 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
   );
 }
 
+function CustomListPanel({ show, setOpenPanel, icon }) {
+  const [options, setOptions] = useState({ value: "" });
+
+  return (
+    <Panel
+      show={show}
+      setOpenPanel={setOpenPanel}
+      panel={Panels.CUSTOM_LIST}
+      eventArgs={options}>
+      <CategoryTitle panel={Panels.CUSTOM_LIST} icon={<></>} />
+
+      <VerticalSpace space="medium" />
+      <Divider />
+      <VerticalSpace space="medium" />
+      <Container space="small">
+        <LabeledInputGroup title="Enter your list">
+          <TextboxMultiline
+            value={options.value}
+            placeholder="Enter a list, with terms separated by a new line"
+            onInput={(e) =>
+              setOptions({ ...options, value: e.currentTarget.value })
+            }
+          />
+        </LabeledInputGroup>
+      </Container>
+    </Panel>
+  );
+}
+
 function Plugin(props: { greeting: string }) {
   const [openPanel, setOpenPanel] = useState<null | PanelData>(null);
 
@@ -481,8 +510,8 @@ function Plugin(props: { greeting: string }) {
         setOpenPanel={setOpenPanel}
       />
 
-      <CustomListPanel
-        show={openPanel === Panels.CUSTOM_LIST}
+      <ComponentVariabelsPanel
+        show={openPanel === Panels.COMPONENT_VARIABLES}
         setOpenPanel={setOpenPanel}
         icon={
           <svg
@@ -534,6 +563,12 @@ function Plugin(props: { greeting: string }) {
             />
           </svg>
         }
+      />
+
+      <CustomListPanel
+        show={openPanel === Panels.CUSTOM_LIST}
+        setOpenPanel={setOpenPanel}
+        icon={<></>}
       />
 
       <div className={styles.container}>
@@ -695,7 +730,7 @@ function Plugin(props: { greeting: string }) {
           />
 
           <CategoryRow
-            panel={Panels.CUSTOM_LIST}
+            panel={Panels.COMPONENT_VARIABLES}
             setOpenPanel={setOpenPanel}
             icon={
               <svg
@@ -747,6 +782,12 @@ function Plugin(props: { greeting: string }) {
                 />
               </svg>
             }
+          />
+
+          <CategoryRow
+            panel={Panels.CUSTOM_LIST}
+            setOpenPanel={setOpenPanel}
+            icon={<></>}
           />
 
           <CategoryRow
