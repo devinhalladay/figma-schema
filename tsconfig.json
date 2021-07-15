@@ -4,7 +4,8 @@
     "typeRoots": ["node_modules/@figma", "node_modules/@types"],
     "jsxFragmentFactory": "Fragment",
     "lib": [
-      "es6"
+      "es6",
+      "es7"
     ],
   },
   "paths": {

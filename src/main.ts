@@ -1,9 +1,11 @@
 import {
+  getSceneNodeById,
   getSelectedNodesOrAllNodes,
   loadFontsAsync,
   on,
   showUI,
   sortNodesByCanonicalOrder,
+  traverseNode,
 } from "@create-figma-plugin/utilities";
 import faker from "faker";
 import moment, { Moment } from "moment";
@@ -130,9 +132,73 @@ export default function () {
     return
   }
 
+  function sendSelectedNodes(nodes: SceneNode[]) {
+    console.log('sending nodes:');
+    console.log(nodes);
+    
+    
+    figma.ui.postMessage({
+      type: Panels.CUSTOM_LIST.event,
+      nodes: JSON.parse(JSON.stringify(nodes))
+    })
+  }
+
+  function getSelectedTextNodes(data) {
+    const selectedNodes = getSelectedNodesOrAllNodes();
+    const textNodes = []
+
+    traverseNode(
+      selectedNodes[0],
+      function (node: SceneNode): void {
+        if (node.type === 'TEXT') {
+          textNodes.push({
+            
+            ...node,
+            id: node.id,
+            characters: node.characters,
+            name: node.name,
+          })
+        }
+      }
+    )
+
+    // console.log(textNodes);
+    
+
+    // figma.root.setPluginData('selectedNodes', JSON.stringify(textNodes))
+
+    
+
+    // data.setOptions({...data.options, nodes: textNodes})
+
+    return textNodes
+  }
+
+  function generateMultiple(data) {
+    const textNodes = getSelectedTextNodes(data)
+
+    console.log('test nodes');
+    console.log(textNodes);
+
+    sendSelectedNodes(textNodes)
+
+    // const content = "test 2"
+
+    // textNodes.forEach((node, i) => {
+    //     figma.loadFontAsync(node.fontName as FontName).then(() => {
+    //       if (Array.isArray(content)) {
+    //         node.characters = content[i];
+    //       } else {
+    //         node.characters = content.toString();
+    //       }
+    //     });
+    // });
+  }
+
   on(Panels.NAMES.event, randomName);
   on(Panels.TIMES.event, generateTimeTable);
-  on(Panels.CUSTOM_LIST.event, generateCustomList);
+  on(Panels.CUSTOM_LIST.event, generateMultiple);
+  on("GET_SELECTED_TEXT_LAYERS", getSelectedTextNodes);
 
   showUI(options, data);
 }

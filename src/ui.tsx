@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Container,
   Divider,
   Dropdown,
@@ -14,7 +15,10 @@ import {
   Toggle,
   VerticalSpace,
 } from "@create-figma-plugin/ui";
-import { emit } from "@create-figma-plugin/utilities";
+import {
+  emit,
+  getSceneNodeById,
+} from "@create-figma-plugin/utilities";
 import { createContext, Fragment, h, JSX } from "preact";
 import { useState } from "preact/hooks";
 import HorizontalSpace from "./components/HorizontalSpace";
@@ -318,7 +322,38 @@ function NamePanel({ show, setOpenPanel, icon }) {
 }
 
 function CustomListPanel({ show, setOpenPanel, icon }) {
-  const [options, setOptions] = useState({ value: "" });
+  const [options, setOptions] = useState({ value: "", nodes: [] });
+
+  const typeOptions: Array<DropdownOption> = [
+    { value: "Names" },
+    { value: "Times" },
+    { value: "Custom List" },
+  ];
+
+  const [selectedLayers, setSelectedLayers] = useState([]);
+
+  function handleChange(
+    event: JSX.TargetedEvent<HTMLInputElement>,
+    node: SceneNode | Node
+  ) {
+    // if (event.currentTarget.checked) {
+    setSelectedLayers(selectedLayers.concat(node));
+
+    console.log(node);
+
+    // }
+
+    console.log(selectedLayers);
+
+    return;
+  }
+
+  onmessage = (event) => {
+    setOptions({ ...options, nodes: event.data.pluginMessage.nodes });
+    console.log(event.data.pluginMessage);
+
+    // console.log(options.nodes);
+  };
 
   return (
     <Panel
@@ -384,7 +419,7 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
       <Divider />
       <VerticalSpace space="medium" />
       <Container space="small">
-        <LabeledInputGroup title="Enter your list">
+        {/* <LabeledInputGroup title="Enter your list">
           <TextboxMultiline
             value={options.value}
             placeholder="Enter a list, with terms separated by a new line"
@@ -392,7 +427,36 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
               setOptions({ ...options, value: e.currentTarget.value })
             }
           />
-        </LabeledInputGroup>
+        </LabeledInputGroup> */}
+
+        {options.nodes.length > 0 &&
+          options.nodes.map((node) => {
+            // const nodeValue = getSceneNodeById(node.id).characters;
+            console.log(node);
+
+            return (
+              <>
+                <Checkbox
+                  onChange={(e) => handleChange(e, node)}
+                  value={selectedLayers.includes(node)}>
+                  <Text>{node.name}</Text>
+                </Checkbox>
+                <VerticalSpace space="small" />
+                {selectedLayers.includes(node) && (
+                  <>
+                    <Dropdown
+                      onChange={(
+                        e: JSX.TargetedEvent<HTMLInputElement>
+                      ) => null}
+                      options={typeOptions}
+                      value={typeOptions[0].value}
+                    />
+                    <VerticalSpace space="small" />
+                  </>
+                )}
+              </>
+            );
+          })}
       </Container>
     </Panel>
   );
