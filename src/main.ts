@@ -162,6 +162,8 @@ export default function () {
       }
     )
 
+    sendSelectedNodes(textNodes)
+
     // console.log(textNodes);
     
 
@@ -175,30 +177,31 @@ export default function () {
   }
 
   function generateMultiple(data) {
-    const textNodes = getSelectedTextNodes(data)
+    // const textNodes = getSelectedTextNodes(data)
 
     console.log('test nodes');
-    console.log(textNodes);
+    // console.log(textNodes);
 
-    sendSelectedNodes(textNodes)
+    
 
-    // const content = "test 2"
+    const content = "test 2"
 
-    // textNodes.forEach((node, i) => {
-    //     figma.loadFontAsync(node.fontName as FontName).then(() => {
-    //       if (Array.isArray(content)) {
-    //         node.characters = content[i];
-    //       } else {
-    //         node.characters = content.toString();
-    //       }
-    //     });
-    // });
+    data.nodes.forEach((node, i) => {
+        figma.loadFontAsync(node.fontName as FontName).then(() => {
+          if (Array.isArray(content)) {
+            node.characters = content[i];
+          } else {
+            node.characters = content.toString();
+          }
+        });
+    });
   }
 
   on(Panels.NAMES.event, randomName);
   on(Panels.TIMES.event, generateTimeTable);
   on(Panels.CUSTOM_LIST.event, generateCustomList);
   on(Panels.COMPONENT_VARIABLES.event, generateMultiple);
+  on("GET_TEXT_LAYER_SELECTIONS", getSelectedTextNodes);
 
   showUI(options, data);
 }

@@ -11,6 +11,11 @@
 }
 
 .row {
+  background-color: #fff;
+}
+
+.rowContents {
+  flex: 1;
   display: flex;
   align-items: center;
   padding-top: 6px;

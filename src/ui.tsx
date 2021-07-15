@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   Container,
   Divider,
@@ -29,6 +30,7 @@ import { PanelData, Panels } from "./constants";
 import styles from "./styles.module.css";
 import CategoryRow from "./components/CategoryRow";
 import { HourglassMedium } from "phosphor-react";
+import CategoryTitle from "./components/CategoryTitle";
 
 interface PanelContextProps {
   panel: PanelData | null;
@@ -187,22 +189,6 @@ function TimesPanel({ show, setOpenPanel }) {
   );
 }
 
-function CategoryTitle({ panel, icon }) {
-  return (
-    <Container>
-      <div className={styles.row}>
-        <div className={styles.inlineCenter}>
-          <div className={styles.box}>{icon}</div>
-          <Stack space="extraSmall">
-            <h3>{panel.name}</h3>
-            <Text muted>{panel.summary}</Text>
-          </Stack>
-        </div>
-      </div>
-    </Container>
-  );
-}
-
 function NamePanel({ show, setOpenPanel, icon }) {
   const options: Array<DropdownOption> = [
     { value: "Any" },
@@ -234,7 +220,9 @@ function NamePanel({ show, setOpenPanel, icon }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.NAMES}
       eventArgs={nameOptions}>
-      <CategoryTitle panel={Panels.NAMES} icon={icon} />
+      <Container>
+        <CategoryTitle panel={Panels.NAMES} icon={icon} />
+      </Container>
 
       <VerticalSpace space="medium" />
       <Divider />
@@ -336,14 +324,15 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
     event: JSX.TargetedEvent<HTMLInputElement>,
     node: SceneNode | Node
   ) {
-    // if (event.currentTarget.checked) {
-    setSelectedLayers(selectedLayers.concat(node));
-
-    console.log(node);
-
-    // }
-
-    console.log(selectedLayers);
+    if (event.currentTarget.checked) {
+      setSelectedLayers(selectedLayers.concat(node));
+    } else if (selectedLayers.includes(node)) {
+      setSelectedLayers(
+        selectedLayers.filter(function (item) {
+          return item.id !== node.id;
+        })
+      );
+    }
 
     return;
   }
@@ -361,59 +350,61 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.COMPONENT_VARIABLES}
       eventArgs={options}>
-      <CategoryTitle
-        panel={Panels.COMPONENT_VARIABLES}
-        icon={
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 192 192"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M54 30C6 30 54 96 6 96C54 96 6 162 54 162"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M138 30C186 30 138 96 186 96C138 96 186 162 138 162"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <line
-              x1="59"
-              y1="64"
-              x2="132"
-              y2="64"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-            <line
-              x1="59"
-              y1="96"
-              x2="132"
-              y2="96"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-            <line
-              x1="59"
-              y1="128"
-              x2="132"
-              y2="128"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-          </svg>
-        }
-      />
+      <Container>
+        <CategoryTitle
+          panel={Panels.COMPONENT_VARIABLES}
+          icon={
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 192 192"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M54 30C6 30 54 96 6 96C54 96 6 162 54 162"
+                stroke="black"
+                stroke-width="12"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M138 30C186 30 138 96 186 96C138 96 186 162 138 162"
+                stroke="black"
+                stroke-width="12"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <line
+                x1="59"
+                y1="64"
+                x2="132"
+                y2="64"
+                stroke="black"
+                stroke-width="12"
+                stroke-linecap="round"
+              />
+              <line
+                x1="59"
+                y1="96"
+                x2="132"
+                y2="96"
+                stroke="black"
+                stroke-width="12"
+                stroke-linecap="round"
+              />
+              <line
+                x1="59"
+                y1="128"
+                x2="132"
+                y2="128"
+                stroke="black"
+                stroke-width="12"
+                stroke-linecap="round"
+              />
+            </svg>
+          }
+        />
+      </Container>
 
       <VerticalSpace space="medium" />
       <Divider />
@@ -457,6 +448,13 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
               </>
             );
           })}
+
+        <Button
+          onClick={() => emit("GET_TEXT_LAYER_SELECTIONS", options)}>
+          {options.nodes.length > 0
+            ? "Update selections"
+            : "Get selections"}
+        </Button>
       </Container>
     </Panel>
   );
