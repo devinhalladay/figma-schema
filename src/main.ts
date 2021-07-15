@@ -7,6 +7,7 @@ import {
 } from "@create-figma-plugin/utilities";
 import faker from "faker";
 import moment, { Moment } from "moment";
+import { Panels } from "./constants";
 
 export default function () {
   const options = { width: 300, height: 500 };
@@ -125,8 +126,13 @@ export default function () {
     replaceSelectedNodesContent(timeStops);
   }
 
-  on("GENERATE_RANDOM_NAMES", randomName);
-  on("GENERATE_RANDOM_TIMES", generateTimeTable);
+  function generateCustomList() {
+    return
+  }
+
+  on(Panels.NAMES.event, randomName);
+  on(Panels.TIMES.event, generateTimeTable);
+  on(Panels.CUSTOM_LIST.event, generateCustomList);
 
   showUI(options, data);
 }

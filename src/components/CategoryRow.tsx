@@ -21,7 +21,6 @@ export default function CategoryRow({
 }: ICategoryRow) {
   return (
     <Container onClick={() => setOpenPanel(panel)}>
-      <VerticalSpace space="medium" />
       <div className={styles.row}>
         <div className={styles.inlineCenter}>
           <div className={styles.box}>{icon}</div>
