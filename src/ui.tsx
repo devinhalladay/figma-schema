@@ -310,12 +310,15 @@ function NamePanel({ show, setOpenPanel, icon }) {
 }
 
 function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
-  const [options, setOptions] = useState({ value: "", nodes: [] });
+  const [options, setOptions] = useState({
+    value: "",
+    nodes: [],
+  });
 
   const typeOptions: Array<DropdownOption> = [
-    { value: "Names" },
-    { value: "Times" },
-    { value: "Custom List" },
+    { value: "Names", event: Panels.NAMES.event },
+    { value: "Times", event: Panels.TIMES.event },
+    { value: "Custom List", event: Panels.CUSTOM_LIST.event },
   ];
 
   const [selectedLayers, setSelectedLayers] = useState([]);
@@ -325,8 +328,36 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
     node: SceneNode | Node
   ) {
     if (event.currentTarget.checked) {
-      setSelectedLayers(selectedLayers.concat(node));
-    } else if (selectedLayers.includes(node)) {
+      // setSelectedLayers(selectedLayers.concat(node));
+
+      if (selectedLayers.some((layer) => layer.id === node.id)) {
+        let nodeIndex = selectedLayers.indexOf(node);
+        let nodesCopy = [...selectedLayers];
+        let nodeCopy = {
+          ...nodesCopy[nodeIndex],
+        };
+        nodeCopy.operation = typeOptions.find(
+          (option) => option.value === event.currentTarget.value
+        );
+
+        nodesCopy[nodeIndex] = nodeCopy;
+
+        setSelectedLayers(nodesCopy);
+
+        console.log(selectedLayers);
+      } else {
+        let nodeCopy = {
+          ...node,
+        };
+
+        nodeCopy.operation = typeOptions[0]; //works
+
+        setSelectedLayers(selectedLayers.concat(nodeCopy));
+
+        console.log("selected");
+        console.log(selectedLayers);
+      }
+    } else if (selectedLayers.some((layer) => layer.id === node.id)) {
       setSelectedLayers(
         selectedLayers.filter(function (item) {
           return item.id !== node.id;
@@ -343,6 +374,16 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
 
     // console.log(options.nodes);
   };
+
+  function dispatchAllEvents() {
+    selectedLayers.forEach((node) => {
+      if (node.operation) {
+        console.log(node.operation);
+
+        emit(node.operation.event, node);
+      }
+    });
+  }
 
   return (
     <Panel
@@ -410,37 +451,54 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
       <Divider />
       <VerticalSpace space="medium" />
       <Container space="small">
-        {/* <LabeledInputGroup title="Enter your list">
-          <TextboxMultiline
-            value={options.value}
-            placeholder="Enter a list, with terms separated by a new line"
-            onInput={(e) =>
-              setOptions({ ...options, value: e.currentTarget.value })
-            }
-          />
-        </LabeledInputGroup> */}
-
         {options.nodes.length > 0 &&
-          options.nodes.map((node) => {
-            // const nodeValue = getSceneNodeById(node.id).characters;
+          options.nodes.map((node, i) => {
             console.log(node);
+
+            // {value, event}
 
             return (
               <>
                 <Checkbox
                   onChange={(e) => handleChange(e, node)}
-                  value={selectedLayers.includes(node)}>
+                  value={selectedLayers.some(
+                    (layer) => layer.id === node.id
+                  )}>
                   <Text>{node.name}</Text>
                 </Checkbox>
                 <VerticalSpace space="small" />
-                {selectedLayers.includes(node) && (
+                {selectedLayers.some(
+                  (layer) => layer.id === node.id
+                ) && (
                   <>
                     <Dropdown
                       onChange={(
                         e: JSX.TargetedEvent<HTMLInputElement>
-                      ) => null}
+                      ) => {
+                        let nodeIndex = selectedLayers.findIndex(
+                          (layer) => layer.id === node.id
+                        );
+                        let nodesCopy = [...selectedLayers];
+                        let nodeCopy = {
+                          ...nodesCopy[nodeIndex],
+                        };
+                        nodeCopy.operation = typeOptions.find(
+                          (option) =>
+                            option.value === e.currentTarget.value
+                        );
+
+                        nodesCopy[nodeIndex] = nodeCopy;
+
+                        setSelectedLayers(nodesCopy);
+
+                        console.log(selectedLayers);
+                      }}
                       options={typeOptions}
-                      value={typeOptions[0].value}
+                      value={
+                        selectedLayers.find(
+                          (layer) => layer.id === node.id
+                        ).operation.value
+                      }
                     />
                     <VerticalSpace space="small" />
                   </>
@@ -450,10 +508,15 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
           })}
 
         <Button
+          secondary
           onClick={() => emit("GET_TEXT_LAYER_SELECTIONS", options)}>
           {options.nodes.length > 0
             ? "Update selections"
             : "Get selections"}
+        </Button>
+
+        <Button onClick={() => dispatchAllEvents()}>
+          Fill selected layers
         </Button>
       </Container>
     </Panel>

@@ -15,10 +15,9 @@ export default function () {
   const options = { width: 300, height: 500 };
   const data = { greeting: "Hello, World!" };
 
-  function replaceSelectedNodesContent(
+  function replaceNodesContent(nodes: SceneNode[], 
     content: string | number | string[]
   ) {
-    let nodes = getSelectedNodesOrAllNodes();
     // nodes = sortNodesByCanonicalOrder(nodes).reverse();
 
     nodes.forEach((node, i) => {
@@ -35,7 +34,19 @@ export default function () {
   }
 
   function randomName(data) {
-    const nodes = getSelectedNodesOrAllNodes();
+    console.log(data);
+
+    let nodes;
+
+    if (data.id) {
+      nodes = [getSceneNodeById(data.id)]
+      console.log(nodes);
+      
+      
+    } else {
+      nodes = getSelectedNodesOrAllNodes();
+    }
+
 
     function nameFactory(gender: undefined | number) {
       let nameParts = [];
@@ -56,6 +67,8 @@ export default function () {
         );
       } else if (data.lastInitial === "Initial") {
         nameParts.push(faker.name.lastName(gender).charAt(0))
+      } else {
+        nameParts.push(faker.name.findName())
       }
 
       // console.log(nameParts);
@@ -66,12 +79,14 @@ export default function () {
     let namesList = [];
     
 
-    if (data.gender == "Any") {
+    if (data.gender == "Any" || data.gender === undefined) {
       for (let i = 0; i < nodes.length; i++) {
         let name = nameFactory(undefined)
+        console.log(name);
+        
         namesList.push(name);
       }
-    } else {
+    } else if (data.gender) {
       let gender = data.gender === "Male" ? 0 : 1; // Male = 0, Female = 1
 
       for (let i = 0; i < nodes.length; i++) {
@@ -80,9 +95,10 @@ export default function () {
       }
     }
 
-    console.log(namesList);
+    // console.log(namesList);
 
-    replaceSelectedNodesContent(namesList);
+      replaceNodesContent(nodes, namesList);
+
   }
 
   function setMeridiem(time: Moment, newMeridiem: string) {
@@ -123,9 +139,9 @@ export default function () {
       timeStops.push(newTime);
     }
 
-    console.log(timeStops);
+    // console.log(timeStops);
 
-    replaceSelectedNodesContent(timeStops);
+    replaceNodesContent(nodes, timeStops);
   }
 
   function generateCustomList() {
@@ -133,8 +149,8 @@ export default function () {
   }
 
   function sendSelectedNodes(nodes: SceneNode[]) {
-    console.log('sending nodes:');
-    console.log(nodes);
+    // console.log('sending nodes:');
+    // console.log(nodes);
     
     
     figma.ui.postMessage({
@@ -179,22 +195,24 @@ export default function () {
   function generateMultiple(data) {
     // const textNodes = getSelectedTextNodes(data)
 
-    console.log('test nodes');
-    // console.log(textNodes);
+    // console.log('test nodes');
+    console.log(data);
 
     
 
-    const content = "test 2"
+    // const content = "test 2"
 
-    data.nodes.forEach((node, i) => {
-        figma.loadFontAsync(node.fontName as FontName).then(() => {
-          if (Array.isArray(content)) {
-            node.characters = content[i];
-          } else {
-            node.characters = content.toString();
-          }
-        });
-    });
+    // data.nodes.forEach((node, i) => {
+    //   if (node.operation)
+
+    //     figma.loadFontAsync(node.fontName as FontName).then(() => {
+    //       if (Array.isArray(content)) {
+    //         node.characters = content[i];
+    //       } else {
+    //         node.characters = content.toString();
+    //       }
+    //     });
+    // });
   }
 
   on(Panels.NAMES.event, randomName);
