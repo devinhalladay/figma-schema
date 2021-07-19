@@ -14,15 +14,22 @@ export default function () {
 
   function replaceNodesContent(
     nodes: SceneNode[],
-    content: string | number | string[]
+    content: string | number | string[],
+    random: Boolean
   ) {
     // nodes = sortNodesByCanonicalOrder(nodes).reverse();
+    console.log('cpmtemt');
+    console.log(content);
+    
+    
 
     nodes.forEach((node, i) => {
+      let index = i
       if (node.type === "TEXT") {
         figma.loadFontAsync(node.fontName as FontName).then(() => {
           if (Array.isArray(content)) {
-            node.characters = content[i];
+            index = Math.floor(Math.random()*content.length)
+            node.characters = content[index];
           } else {
             node.characters = content.toString();
           }
@@ -143,8 +150,12 @@ export default function () {
     replaceNodesContent(nodes, timeStops);
   }
 
-  function generateCustomList() {
-    return;
+  function generateCustomList(data) {
+    let nodes = getProvidedOrSelectedNodes(data);
+
+    const placeholders = data.value.split("\n");
+
+    replaceNodesContent(nodes, placeholders, true);
   }
 
   function sendSelectedNodes(nodes: SceneNode[]) {
