@@ -155,21 +155,31 @@ export default function () {
   }
 
   function getSelectedTextNodes(data) {
-    const selectedNodes = getSelectedNodesOrAllNodes();
+    let nodes = getProvidedOrSelectedNodes(data);
     const textNodes = [];
 
     console.log('selecte notedes');
     
-    console.log(selectedNodes);
+    console.log(nodes);
+    
 
-    selectedNodes.forEach((node: SceneNode) => {
-      traverseNode(node, function (): void {
+    nodes.forEach((node: SceneNode) => {
+      traverseNode(node, function (child): void {
+        console.log(node);
+        
         if (node.type === "TEXT") {
           textNodes.push({
             ...node,
             id: node.id,
             characters: node.characters,
             name: node.name,
+          });
+        } else if (child.type === "TEXT") {
+          textNodes.push({
+            ...child,
+            id: child.id,
+            characters: child.characters,
+            name: child.name,
           });
         }
       });
@@ -219,7 +229,7 @@ export default function () {
 
   figma.on('selectionchange', () => {
 
-    if (figma.currentPage.selection.length > 1) {
+    if (figma.currentPage.selection.length > 0) {
       
       // find nodes with fills that are of type SOLID
     //   const selectedNodes = getSelectedNodesOrAllNodes();
@@ -247,7 +257,7 @@ export default function () {
     // })
     // emit('GET_TEXT_LAYER_SELECTIONS')
     } else {
-      console.log('Select at least 2 layers')
+      console.log('Select at least 1 layer')
     }
   })
 

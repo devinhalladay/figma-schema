@@ -13,7 +13,8 @@
     "preact": "^10.5.14",
     "preact-compat": "^3.19.0",
     "react-day-picker": "^8.0.0-beta.29",
-    "react-transition-group": "^4.4.2"
+    "react-transition-group": "^4.4.2",
+    "vite-svg-loader": "^2.1.0"
   },
   "devDependencies": {
     "@create-figma-plugin/build": "^1.2.2",
