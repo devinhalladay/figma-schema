@@ -5,7 +5,6 @@ import {
   Divider,
   Dropdown,
   DropdownOption,
-  IconSearchLarge32,
   render,
   SegmentedControl,
   SegmentedControlOption,
@@ -18,10 +17,8 @@ import { emit } from "@create-figma-plugin/utilities";
 import { createContext, Fragment, h, JSX } from "preact";
 import { useState } from "preact/hooks";
 import CategoryRow from "./components/CategoryRow";
-import CategoryTitle from "./components/CategoryTitle";
 import HorizontalSpace from "./components/HorizontalSpace";
 import PeaceIcon from "./components/Icons/PeaceIcon";
-import VariableIcon from "./components/Icons/VariableIcon";
 import LabeledInputGroup from "./components/LabeledInputGroup";
 import LabeledSwitch from "./components/LabeledSwitch";
 import Panel from "./components/Panel";
@@ -119,13 +116,7 @@ function TimesPanel({ show, setOpenPanel }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.TIMES}
       eventArgs={{ ...startTime, interval: interval }}>
-      <CategoryTitle panel={Panels.TIMES} />
-
       <div className={styles.main}>
-        <VerticalSpace space="medium" />
-        <Divider />
-        <VerticalSpace space="medium" />
-
         <Container space="small">
           <LabeledInputGroup title="Constraints">
             <LabeledSwitch
@@ -216,13 +207,6 @@ function NamePanel({ show, setOpenPanel }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.NAMES}
       eventArgs={nameOptions}>
-      <Container>
-        <CategoryTitle panel={Panels.NAMES} />
-      </Container>
-
-      <VerticalSpace space="medium" />
-      <Divider />
-
       <div className={styles.main}>
         <VerticalSpace space="medium" />
         <Container>
@@ -391,10 +375,6 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
       eventArgs={options}
       //TODO rename eventArgs
     >
-      <Container>
-        <CategoryTitle panel={Panels.COMPONENT_VARIABLES} />
-      </Container>
-
       <VerticalSpace space="medium" />
       <Divider />
       <VerticalSpace space="medium" />
@@ -480,11 +460,6 @@ function CustomListPanel({ show, setOpenPanel }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.CUSTOM_LIST}
       eventArgs={options}>
-      <CategoryTitle panel={Panels.CUSTOM_LIST} />
-
-      <VerticalSpace space="medium" />
-      <Divider />
-      <VerticalSpace space="medium" />
       <Container space="small">
         <LabeledInputGroup title="Enter your list">
           <TextboxMultiline

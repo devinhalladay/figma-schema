@@ -15,7 +15,7 @@ export default function () {
   function replaceNodesContent(
     nodes: SceneNode[],
     content: string | number | string[],
-    random: Boolean
+    random: Boolean | undefined
   ) {
     // nodes = sortNodesByCanonicalOrder(nodes).reverse();
     console.log('cpmtemt');

@@ -1,6 +1,12 @@
+import {
+  Container,
+  Divider,
+  VerticalSpace,
+} from "@create-figma-plugin/ui";
 import { Fragment, h } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import styles from "../../styles.module.css";
+import CategoryTitle from "../CategoryTitle";
 import PanelFooter from "./components/Footer";
 import PanelNavbar from "./components/NavBar";
 
@@ -32,7 +38,15 @@ export default function Panel({
         onAnimationEnd={onAnimationEnd}>
         <div className={styles.container}>
           <PanelNavbar setOpenPanel={setOpenPanel} />
-          <div className={styles.main}>{children}</div>
+          <div className={styles.main}>
+            <Container>
+              <CategoryTitle panel={panel} />
+            </Container>
+            <VerticalSpace space="small" />
+            <Divider />
+            <VerticalSpace space="medium" />
+            {children}
+          </div>
           <PanelFooter panel={panel} eventArgs={eventArgs} />
         </div>
       </div>
