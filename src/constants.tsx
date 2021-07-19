@@ -4,6 +4,12 @@ import { ReactElement, ReactNode } from "react";
 import UsersIcon from "./components/Icons/UsersIcon";
 import TimeIcon from "./components/Icons/TimeIcon";
 import VariableIcon from "./components/Icons/VariableIcon";
+import {
+  ComponentVariabelsPanel,
+  CustomListPanel,
+  NamePanel,
+  TimesPanel,
+} from "./ui";
 // import { ReactComponent as VariableIcon } from "./assets/variables.svg";
 
 export interface PanelData {
@@ -25,24 +31,28 @@ export const Panels = {
     summary: "Male, Female, and Neutral",
     event: "GENERATE_RANDOM_NAMES",
     icon: <UsersIcon />,
+    element: <NamePanel />,
   },
   COMPONENT_VARIABLES: {
     name: "Component Variables",
     summary: "Fill multiple variables",
     event: "GET_COMPONENT_VARIABLES",
     icon: <VariableIcon />,
+    element: <ComponentVariabelsPanel />,
   },
   CUSTOM_LIST: {
     name: "Create a custom list",
     summary: "Add a list of your own content",
     event: "GET_CUSTOM_LIST",
     icon: <VariableIcon />,
+    element: <CustomListPanel />,
   },
   TIMES: {
     name: "Times",
     summary: "Spaced, Random, and Time Zones",
     event: "GENERATE_RANDOM_TIMES",
     icon: <TimeIcon />,
+    element: <TimesPanel />,
   },
   ORGANIZATIONS: {
     name: "Organizations",

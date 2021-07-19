@@ -15,7 +15,7 @@ import {
 } from "@create-figma-plugin/ui";
 import { emit } from "@create-figma-plugin/utilities";
 import { createContext, Fragment, h, JSX } from "preact";
-import { useState } from "preact/hooks";
+import { useContext, useState } from "preact/hooks";
 import CategoryRow from "./components/CategoryRow";
 import HorizontalSpace from "./components/HorizontalSpace";
 import PeaceIcon from "./components/Icons/PeaceIcon";
@@ -26,14 +26,17 @@ import { PanelData, Panels } from "./constants";
 import styles from "./styles.module.css";
 
 interface PanelContextProps {
-  panel: PanelData | null;
+  panel: PanelData[] | null;
 }
 
-const PanelContext = createContext<Partial<PanelContextProps>>({
-  panel: null,
+// const PanelContext = createContext<Partial<PanelContextProps>>();
+
+export const PanelContext = createContext({
+  openPanels: [],
+  setOpenPanels: null,
 });
 
-function TimesPanel({ show, setOpenPanel }) {
+export function TimesPanel({ show, setOpenPanel }) {
   const [startTime, setStartTime] = useState({
     enabled: false,
     time: {
@@ -115,68 +118,66 @@ function TimesPanel({ show, setOpenPanel }) {
       show={show}
       setOpenPanel={setOpenPanel}
       panel={Panels.TIMES}
-      eventArgs={{ ...startTime, interval: interval }}>
-      <div className={styles.main}>
-        <Container space="small">
-          <LabeledInputGroup title="Constraints">
-            <LabeledSwitch
-              title="Start time and intervals"
-              value={startTime.enabled}
-              handleChange={() => {
-                setStartTime({
-                  ...startTime,
-                  enabled: !startTime.enabled,
-                });
-              }}
-            />
-            {startTime.enabled && (
-              <>
-                <VerticalSpace space="small" />
-                <div className={styles.inlineCenter}>
-                  <TextboxNumeric
-                    onInput={handleChangeHour}
-                    value={startTime.time.hour}
-                  />
-                  <HorizontalSpace space="small" />
-                  <TextboxNumeric
-                    onInput={handleChangeMinute}
-                    value={startTime.time.minute}
-                  />
-                  <HorizontalSpace space="small" />
-                  <SegmentedControl
-                    onChange={handleAmPmChange}
-                    options={amPmOptions}
-                    value={startTime.amPm}
-                  />
-                </div>
-                <VerticalSpace space="medium" />
-                <LabeledInputGroup title="Interval">
-                  <TextboxNumeric
-                    onInput={handleIntervalChange}
-                    value={interval}
-                    suffix=" mins"
-                    minimum={0}
-                  />
-                </LabeledInputGroup>
-              </>
-            )}
-          </LabeledInputGroup>
-          <LabeledInputGroup title="Time format">
-            <Dropdown
-              onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
-                setTimeFormat("YYYY-MM-DD")
-              }
-              options={timeFormatOptions}
-              value={timeFormatOptions[0].value}
-            />
-          </LabeledInputGroup>
-        </Container>
-      </div>
+      data={{ ...startTime, interval: interval }}>
+      <Container space="small">
+        <LabeledInputGroup title="Constraints">
+          <LabeledSwitch
+            title="Start time and intervals"
+            value={startTime.enabled}
+            handleChange={() => {
+              setStartTime({
+                ...startTime,
+                enabled: !startTime.enabled,
+              });
+            }}
+          />
+          {startTime.enabled && (
+            <>
+              <VerticalSpace space="small" />
+              <div className={styles.inlineCenter}>
+                <TextboxNumeric
+                  onInput={handleChangeHour}
+                  value={startTime.time.hour}
+                />
+                <HorizontalSpace space="small" />
+                <TextboxNumeric
+                  onInput={handleChangeMinute}
+                  value={startTime.time.minute}
+                />
+                <HorizontalSpace space="small" />
+                <SegmentedControl
+                  onChange={handleAmPmChange}
+                  options={amPmOptions}
+                  value={startTime.amPm}
+                />
+              </div>
+              <VerticalSpace space="medium" />
+              <LabeledInputGroup title="Interval">
+                <TextboxNumeric
+                  onInput={handleIntervalChange}
+                  value={interval}
+                  suffix=" mins"
+                  minimum={0}
+                />
+              </LabeledInputGroup>
+            </>
+          )}
+        </LabeledInputGroup>
+        <LabeledInputGroup title="Time format">
+          <Dropdown
+            onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+              setTimeFormat("YYYY-MM-DD")
+            }
+            options={timeFormatOptions}
+            value={timeFormatOptions[0].value}
+          />
+        </LabeledInputGroup>
+      </Container>
     </Panel>
   );
 }
 
-function NamePanel({ show, setOpenPanel }) {
+export function NamePanel() {
   const options: Array<DropdownOption> = [
     { value: "Any" },
     { value: "Male" },
@@ -187,7 +188,6 @@ function NamePanel({ show, setOpenPanel }) {
     false
   );
 
-  const [genderValue, setGenderValue] = useState("Any");
   const [nameOptions, setNameOptions] = useState({
     gender: "Any",
     firstName: true,
@@ -202,45 +202,39 @@ function NamePanel({ show, setOpenPanel }) {
   ];
 
   return (
-    <Panel
-      show={show}
-      setOpenPanel={setOpenPanel}
-      panel={Panels.NAMES}
-      eventArgs={nameOptions}>
-      <div className={styles.main}>
-        <VerticalSpace space="medium" />
-        <Container>
-          <LabeledInputGroup title="Gender association">
-            <Dropdown
-              onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
-                setNameOptions({
-                  ...nameOptions,
-                  gender: e.currentTarget.value,
-                })
-              }
-              options={options}
-              value={nameOptions.gender}
-            />
-          </LabeledInputGroup>
-
-          <Text bold>Options</Text>
-          <VerticalSpace space="small" />
-
-          <LabeledSwitch
-            title="First name"
-            subtitle="eg. Kennedy"
-            handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+    <Panel panel={Panels.NAMES} data={nameOptions}>
+      <Container>
+        <LabeledInputGroup title="Gender association">
+          <Dropdown
+            onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
               setNameOptions({
                 ...nameOptions,
-                firstName: e.currentTarget.checked,
+                gender: e.currentTarget.value,
               })
             }
-            value={nameOptions.firstName}
+            options={options}
+            value={nameOptions.gender}
           />
+        </LabeledInputGroup>
 
-          <VerticalSpace space="small" />
+        <Text bold>Options</Text>
+        <VerticalSpace space="small" />
 
-          {/* <LabeledSwitch
+        <LabeledSwitch
+          title="First name"
+          subtitle="eg. Kennedy"
+          handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+            setNameOptions({
+              ...nameOptions,
+              firstName: e.currentTarget.checked,
+            })
+          }
+          value={nameOptions.firstName}
+        />
+
+        <VerticalSpace space="small" />
+
+        {/* <LabeledSwitch
             title="Middle initial"
             subtitle="eg. G."
             handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
@@ -254,42 +248,43 @@ function NamePanel({ show, setOpenPanel }) {
 
           <VerticalSpace space="small" /> */}
 
-          <LabeledSwitch
-            title="Last name"
-            subtitle="eg. Morocco"
-            handleChange={(
-              e: JSX.TargetedEvent<HTMLInputElement>
-            ) => {
-              setNameOptions({
-                ...nameOptions,
-                lastName: e.currentTarget.checked,
-              });
-              setShowLastNameOptions(!showLastNameOptions);
-            }}
-            value={showLastNameOptions}
-          />
-          {showLastNameOptions && (
-            <>
-              <VerticalSpace space="extraSmall" />
-              <SegmentedControl
-                options={lnOptions}
-                value={nameOptions.lastInitial}
-                onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
-                  setNameOptions({
-                    ...nameOptions,
-                    lastInitial: e.currentTarget.value,
-                  })
-                }
-              />
-            </>
-          )}
-        </Container>
-      </div>
+        <LabeledSwitch
+          title="Last name"
+          subtitle="eg. Morocco"
+          handleChange={(e: JSX.TargetedEvent<HTMLInputElement>) => {
+            setNameOptions({
+              ...nameOptions,
+              lastName: e.currentTarget.checked,
+            });
+            setShowLastNameOptions(!showLastNameOptions);
+          }}
+          value={showLastNameOptions}
+        />
+        {showLastNameOptions && (
+          <>
+            <VerticalSpace space="extraSmall" />
+            <SegmentedControl
+              options={lnOptions}
+              value={nameOptions.lastInitial}
+              onChange={(e: JSX.TargetedEvent<HTMLInputElement>) =>
+                setNameOptions({
+                  ...nameOptions,
+                  lastInitial: e.currentTarget.value,
+                })
+              }
+            />
+          </>
+        )}
+      </Container>
     </Panel>
   );
 }
 
-function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
+export function ComponentVariabelsPanel({
+  show,
+  setOpenPanel,
+  icon,
+}) {
   const [options, setOptions] = useState({
     value: "",
     nodes: [],
@@ -372,12 +367,7 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
       //TODO remove setOpenPanel, hoist to context
       panel={Panels.COMPONENT_VARIABLES}
       //TODO add panelfooter children prop
-      eventArgs={options}
-      //TODO rename eventArgs
-    >
-      <VerticalSpace space="medium" />
-      <Divider />
-      <VerticalSpace space="medium" />
+      data={options}>
       <Container space="small">
         {options.nodes.length > 0 &&
           options.nodes.map((node, i) => {
@@ -451,7 +441,7 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
   );
 }
 
-function CustomListPanel({ show, setOpenPanel }) {
+export function CustomListPanel({ show, setOpenPanel }) {
   const [options, setOptions] = useState({ value: "" });
 
   return (
@@ -459,7 +449,7 @@ function CustomListPanel({ show, setOpenPanel }) {
       show={show}
       setOpenPanel={setOpenPanel}
       panel={Panels.CUSTOM_LIST}
-      eventArgs={options}>
+      data={options}>
       <Container space="small">
         <LabeledInputGroup title="Enter your list">
           <TextboxMultiline
@@ -475,33 +465,36 @@ function CustomListPanel({ show, setOpenPanel }) {
   );
 }
 
+function renderPanels() {
+  const { openPanels } = useContext(PanelContext);
+
+  console.log(openPanels);
+
+  return (
+    <>
+      {Object.entries(Panels).map(([key, value]) => {
+        console.log(value);
+
+        return value.element;
+      })}
+    </>
+  );
+}
+
 function Plugin() {
   const [openPanel, setOpenPanel] = useState<null | PanelData>(null);
+
+  const [openPanels, setOpenPanels] = useState<null | PanelData[]>([
+    Panels.NAMES,
+  ]);
 
   return (
     <PanelContext.Provider
       value={{
-        panel: null,
+        openPanels: openPanels,
+        setOpenPanels: setOpenPanels,
       }}>
-      <NamePanel
-        show={openPanel === Panels.NAMES}
-        setOpenPanel={setOpenPanel}
-      />
-
-      <TimesPanel
-        show={openPanel === Panels.TIMES}
-        setOpenPanel={setOpenPanel}
-      />
-
-      <ComponentVariabelsPanel
-        show={openPanel === Panels.COMPONENT_VARIABLES}
-        setOpenPanel={setOpenPanel}
-      />
-
-      <CustomListPanel
-        show={openPanel === Panels.CUSTOM_LIST}
-        setOpenPanel={setOpenPanel}
-      />
+      {renderPanels()}
 
       <div className={styles.container}>
         <div className={styles.main}>
@@ -536,10 +529,13 @@ function Plugin() {
             <h3 style={{ marginBottom: "2px" }}>Categories</h3>
           </Container>
 
-          <CategoryRow
-            panel={Panels.NAMES}
-            setOpenPanel={setOpenPanel}
-          />
+          {Object.entries(Panels).map(([key, value]) => {
+            // console.log(Panels[panel]);
+
+            return <CategoryRow panel={value} />;
+          })}
+
+          {/*           
 
           <CategoryRow
             panel={Panels.TIMES}
@@ -579,7 +575,7 @@ function Plugin() {
           <CategoryRow
             panel={Panels.TRENDING_TOPICS}
             setOpenPanel={setOpenPanel}
-          />
+          /> */}
 
           <VerticalSpace space="medium" />
         </div>

@@ -7,7 +7,7 @@
     "jsxFragmentFactory": "Fragment",
     "lib": [
       "es6",
-      "es7"
+      "es2017"
     ],
   },
   "paths": {

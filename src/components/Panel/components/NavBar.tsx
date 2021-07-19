@@ -5,16 +5,20 @@ import {
   VerticalSpace,
 } from "@create-figma-plugin/ui";
 import { Fragment, h } from "preact";
+import { useContext } from "preact/hooks";
+import { PanelContext } from "src/ui";
 import styles from "../../../styles.module.css";
 
-export default function PanelNavbar({ setOpenPanel }) {
+export default function PanelNavbar() {
+  const { openPanels, setOpenPanels } = useContext(PanelContext);
+
   return (
     <>
       <Container>
         <VerticalSpace space="small" />
         <button
           className={styles.panelHeader}
-          onClick={() => setOpenPanel(null)}>
+          onClick={() => setOpenPanels([])}>
           <svg
             className={styles.backIcon}
             width="12"
