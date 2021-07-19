@@ -9,28 +9,23 @@ import {
   render,
   SegmentedControl,
   SegmentedControlOption,
-  Stack,
   Text,
   TextboxMultiline,
   TextboxNumeric,
-  Toggle,
   VerticalSpace,
 } from "@create-figma-plugin/ui";
-import {
-  emit,
-  getSceneNodeById,
-} from "@create-figma-plugin/utilities";
+import { emit } from "@create-figma-plugin/utilities";
 import { createContext, Fragment, h, JSX } from "preact";
 import { useState } from "preact/hooks";
+import CategoryRow from "./components/CategoryRow";
+import CategoryTitle from "./components/CategoryTitle";
 import HorizontalSpace from "./components/HorizontalSpace";
+import VariableIcon from "./components/Icons/VariableIcon";
 import LabeledInputGroup from "./components/LabeledInputGroup";
 import LabeledSwitch from "./components/LabeledSwitch";
 import Panel from "./components/Panel";
 import { PanelData, Panels } from "./constants";
 import styles from "./styles.module.css";
-import CategoryRow from "./components/CategoryRow";
-import { HourglassMedium } from "phosphor-react";
-import CategoryTitle from "./components/CategoryTitle";
 
 interface PanelContextProps {
   panel: PanelData | null;
@@ -189,7 +184,7 @@ function TimesPanel({ show, setOpenPanel }) {
   );
 }
 
-function NamePanel({ show, setOpenPanel, icon }) {
+function NamePanel({ show, setOpenPanel }) {
   const options: Array<DropdownOption> = [
     { value: "Any" },
     { value: "Male" },
@@ -221,7 +216,7 @@ function NamePanel({ show, setOpenPanel, icon }) {
       panel={Panels.NAMES}
       eventArgs={nameOptions}>
       <Container>
-        <CategoryTitle panel={Panels.NAMES} icon={icon} />
+        <CategoryTitle panel={Panels.NAMES} />
       </Container>
 
       <VerticalSpace space="medium" />
@@ -389,62 +384,14 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
     <Panel
       show={show}
       setOpenPanel={setOpenPanel}
+      //TODO remove setOpenPanel, hoist to context
       panel={Panels.COMPONENT_VARIABLES}
-      eventArgs={options}>
+      //TODO add panelfooter children prop
+      eventArgs={options}
+      //TODO rename eventArgs
+    >
       <Container>
-        <CategoryTitle
-          panel={Panels.COMPONENT_VARIABLES}
-          icon={
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 192 192"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M54 30C6 30 54 96 6 96C54 96 6 162 54 162"
-                stroke="black"
-                stroke-width="12"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M138 30C186 30 138 96 186 96C138 96 186 162 138 162"
-                stroke="black"
-                stroke-width="12"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <line
-                x1="59"
-                y1="64"
-                x2="132"
-                y2="64"
-                stroke="black"
-                stroke-width="12"
-                stroke-linecap="round"
-              />
-              <line
-                x1="59"
-                y1="96"
-                x2="132"
-                y2="96"
-                stroke="black"
-                stroke-width="12"
-                stroke-linecap="round"
-              />
-              <line
-                x1="59"
-                y1="128"
-                x2="132"
-                y2="128"
-                stroke="black"
-                stroke-width="12"
-                stroke-linecap="round"
-              />
-            </svg>
-          }
-        />
+        <CategoryTitle panel={Panels.COMPONENT_VARIABLES} />
       </Container>
 
       <VerticalSpace space="medium" />
@@ -523,7 +470,7 @@ function ComponentVariabelsPanel({ show, setOpenPanel, icon }) {
   );
 }
 
-function CustomListPanel({ show, setOpenPanel, icon }) {
+function CustomListPanel({ show, setOpenPanel }) {
   const [options, setOptions] = useState({ value: "" });
 
   return (
@@ -532,7 +479,7 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
       setOpenPanel={setOpenPanel}
       panel={Panels.CUSTOM_LIST}
       eventArgs={options}>
-      <CategoryTitle panel={Panels.CUSTOM_LIST} icon={<></>} />
+      <CategoryTitle panel={Panels.CUSTOM_LIST} />
 
       <VerticalSpace space="medium" />
       <Divider />
@@ -552,7 +499,7 @@ function CustomListPanel({ show, setOpenPanel, icon }) {
   );
 }
 
-function Plugin(props: { greeting: string }) {
+function Plugin() {
   const [openPanel, setOpenPanel] = useState<null | PanelData>(null);
 
   return (
@@ -563,7 +510,6 @@ function Plugin(props: { greeting: string }) {
       <NamePanel
         show={openPanel === Panels.NAMES}
         setOpenPanel={setOpenPanel}
-        icon={<IconSearchLarge32 />}
       />
 
       <TimesPanel
@@ -574,62 +520,11 @@ function Plugin(props: { greeting: string }) {
       <ComponentVariabelsPanel
         show={openPanel === Panels.COMPONENT_VARIABLES}
         setOpenPanel={setOpenPanel}
-        icon={
-          <svg
-            width="192"
-            height="192"
-            viewBox="0 0 192 192"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M54 30C6 30 54 96 6 96C54 96 6 162 54 162"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M138 30C186 30 138 96 186 96C138 96 186 162 138 162"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <line
-              x1="59"
-              y1="64"
-              x2="132"
-              y2="64"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-            <line
-              x1="59"
-              y1="96"
-              x2="132"
-              y2="96"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-            <line
-              x1="59"
-              y1="128"
-              x2="132"
-              y2="128"
-              stroke="black"
-              stroke-width="12"
-              stroke-linecap="round"
-            />
-          </svg>
-        }
       />
 
       <CustomListPanel
         show={openPanel === Panels.CUSTOM_LIST}
         setOpenPanel={setOpenPanel}
-        icon={<></>}
       />
 
       <div className={styles.container}>
@@ -742,141 +637,41 @@ function Plugin(props: { greeting: string }) {
           <CategoryRow
             panel={Panels.TIMES}
             setOpenPanel={setOpenPanel}
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="#333333"
-                viewBox="0 0 256 256">
-                <rect width="256" height="256" fill="none"></rect>
-                <path
-                  d="M128,128,67.2,82.4A8,8,0,0,1,64,76V40a8,8,0,0,1,8-8H184a8,8,0,0,1,8,8V75.6412a8,8,0,0,1-3.17594,6.38188L128,128h0"
-                  fill="none"
-                  stroke="#333333"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="16"></path>
-                <path
-                  d="M128,128,67.2,173.6A8,8,0,0,0,64,180v36a8,8,0,0,0,8,8H184a8,8,0,0,0,8-8V180.3588a8,8,0,0,0-3.17594-6.38188L128,128h0"
-                  fill="none"
-                  stroke="#333333"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="16"></path>
-                <line
-                  x1="74.66065"
-                  y1="87.99548"
-                  x2="180.92301"
-                  y2="87.99548"
-                  fill="none"
-                  stroke="#333333"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="16"></line>
-                <line
-                  x1="128"
-                  y1="167.99548"
-                  x2="128"
-                  y2="128"
-                  fill="none"
-                  stroke="#333333"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="16"></line>
-              </svg>
-            }
           />
 
           <CategoryRow
             panel={Panels.COMPONENT_VARIABLES}
             setOpenPanel={setOpenPanel}
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 192 192"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M54 30C6 30 54 96 6 96C54 96 6 162 54 162"
-                  stroke="black"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M138 30C186 30 138 96 186 96C138 96 186 162 138 162"
-                  stroke="black"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <line
-                  x1="59"
-                  y1="64"
-                  x2="132"
-                  y2="64"
-                  stroke="black"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="59"
-                  y1="96"
-                  x2="132"
-                  y2="96"
-                  stroke="black"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="59"
-                  y1="128"
-                  x2="132"
-                  y2="128"
-                  stroke="black"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                />
-              </svg>
-            }
           />
 
           <CategoryRow
             panel={Panels.CUSTOM_LIST}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <CategoryRow
             panel={Panels.ORGANIZATIONS}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <CategoryRow
             panel={Panels.NUMBERS}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <CategoryRow
             panel={Panels.API}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <CategoryRow
             panel={Panels.CONTACT_INFORMATION}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <CategoryRow
             panel={Panels.TRENDING_TOPICS}
             setOpenPanel={setOpenPanel}
-            icon={<></>}
           />
 
           <VerticalSpace space="medium" />

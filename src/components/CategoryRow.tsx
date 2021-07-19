@@ -12,19 +12,17 @@ import CategoryTitle from "./CategoryTitle";
 interface ICategoryRow {
   panel: PanelData;
   setOpenPanel: any;
-  icon: any;
 }
 
 export default function CategoryRow({
   panel,
   setOpenPanel,
-  icon,
 }: ICategoryRow) {
   return (
     <div className={styles.row}>
       <Container onClick={() => setOpenPanel(panel)}>
         <div className={styles.rowContents}>
-          <CategoryTitle panel={panel} icon={icon} />
+          <CategoryTitle panel={panel} />
           <svg
             width="32"
             height="32"

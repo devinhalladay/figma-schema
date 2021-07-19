@@ -1,11 +1,8 @@
 import {
+  emit,
   getSceneNodeById,
-  getSelectedNodesOrAllNodes,
-  loadFontsAsync,
-  on,
-  showUI,
-  sortNodesByCanonicalOrder,
-  traverseNode,
+  getSelectedNodesOrAllNodes, on,
+  showUI, traverseNode
 } from "@create-figma-plugin/utilities";
 import faker from "faker";
 import moment, { Moment } from "moment";
@@ -13,9 +10,10 @@ import { Panels } from "./constants";
 
 export default function () {
   const options = { width: 300, height: 500 };
-  const data = { greeting: "Hello, World!" };
+  const nameData = { greeting: "Hello, World!" };
 
-  function replaceNodesContent(nodes: SceneNode[], 
+  function replaceNodesContent(
+    nodes: SceneNode[],
     content: string | number | string[]
   ) {
     // nodes = sortNodesByCanonicalOrder(nodes).reverse();
@@ -33,72 +31,61 @@ export default function () {
     });
   }
 
-  function randomName(data) {
-    console.log(data);
-
+  function getProvidedOrSelectedNodes(data) {
     let nodes;
 
     if (data.id) {
-      nodes = [getSceneNodeById(data.id)]
-      console.log(nodes);
-      
-      
+      nodes = [getSceneNodeById(data.id)];
     } else {
       nodes = getSelectedNodesOrAllNodes();
     }
 
+    return nodes;
+  }
+
+  function randomName(nameData) {
+    let nodes = getProvidedOrSelectedNodes(nameData)
 
     function nameFactory(gender: undefined | number) {
       let nameParts = [];
 
-      if (data.firstName) {
-        nameParts.push(
-          faker.name.firstName(gender)
-        );
+      if (nameData.firstName) {
+        nameParts.push(faker.name.firstName(gender));
       }
-        
-      // if (data.middleName) {
+
+      // if (nameData.middleName) {
       //   nameParts.push(faker.name.middleName(gender))
       // }
 
-      if (data.lastName && data.lastInitial === "Full") {
-        nameParts.push(
-          faker.name.lastName(gender)
-        );
-      } else if (data.lastInitial === "Initial") {
-        nameParts.push(faker.name.lastName(gender).charAt(0))
+      if (nameData.lastName && nameData.lastInitial === "Full") {
+        nameParts.push(faker.name.lastName(gender));
+      } else if (nameData.lastInitial === "Initial") {
+        nameParts.push(faker.name.lastName(gender).charAt(0));
       } else {
-        nameParts.push(faker.name.findName())
+        nameParts.push(faker.name.findName());
       }
 
-      // console.log(nameParts);
-
-      return nameParts.join(' ')
+      return nameParts.join(" ");
     }
 
     let namesList = [];
-    
 
-    if (data.gender == "Any" || data.gender === undefined) {
+    if (nameData.gender == "Any" || nameData.gender === undefined) {
       for (let i = 0; i < nodes.length; i++) {
-        let name = nameFactory(undefined)
-        console.log(name);
-        
+        let name = nameFactory(undefined);
+
         namesList.push(name);
       }
-    } else if (data.gender) {
-      let gender = data.gender === "Male" ? 0 : 1; // Male = 0, Female = 1
+    } else if (nameData.gender) {
+      let gender = nameData.gender === "Male" ? 0 : 1; // Male = 0, Female = 1
 
       for (let i = 0; i < nodes.length; i++) {
-        let name = nameFactory(gender)
+        let name = nameFactory(gender);
         namesList.push(name);
       }
     }
 
-    // console.log(namesList);
-
-      replaceNodesContent(nodes, namesList);
-
+    replaceNodesContent(nodes, namesList);
   }
 
   function setMeridiem(time: Moment, newMeridiem: string) {
@@ -114,7 +101,21 @@ export default function () {
     return time;
   }
 
+  let data;
+
   function generateTimeTable(data) {
+    
+    let nodes = getProvidedOrSelectedNodes(data);
+    
+    data = {
+      time: {
+        hour: 10,
+        minute: 0,
+      },
+      amPm: "AM",
+      interval: "30",
+    };
+
     let interval = data.interval.replace(/\D/g, "");
 
     // Get current time, replace hours and minutes with input value
@@ -125,7 +126,7 @@ export default function () {
     // Swap AM/PM if needed
     start = setMeridiem(start, data.amPm);
 
-    const nodes = getSelectedNodesOrAllNodes();
+    
 
     // To locale string
     let startTime = moment(start).format("LT");
@@ -139,66 +140,57 @@ export default function () {
       timeStops.push(newTime);
     }
 
-    // console.log(timeStops);
-
     replaceNodesContent(nodes, timeStops);
   }
 
   function generateCustomList() {
-    return
+    return;
   }
 
   function sendSelectedNodes(nodes: SceneNode[]) {
-    // console.log('sending nodes:');
-    // console.log(nodes);
-    
-    
     figma.ui.postMessage({
       type: Panels.CUSTOM_LIST.event,
-      nodes: JSON.parse(JSON.stringify(nodes))
-    })
+      nodes: JSON.parse(JSON.stringify(nodes)),
+    });
   }
 
   function getSelectedTextNodes(data) {
     const selectedNodes = getSelectedNodesOrAllNodes();
-    const textNodes = []
+    const textNodes = [];
 
-    traverseNode(
-      selectedNodes[0],
-      function (node: SceneNode): void {
-        if (node.type === 'TEXT') {
+    console.log('selecte notedes');
+    
+    console.log(selectedNodes);
+
+    selectedNodes.forEach((node: SceneNode) => {
+      traverseNode(node, function (): void {
+        if (node.type === "TEXT") {
           textNodes.push({
-            
             ...node,
             id: node.id,
             characters: node.characters,
             name: node.name,
-          })
+          });
         }
-      }
-    )
-
-    sendSelectedNodes(textNodes)
-
-    // console.log(textNodes);
+      });
+    })
     
+
+    
+
+    sendSelectedNodes(textNodes);
 
     // figma.root.setPluginData('selectedNodes', JSON.stringify(textNodes))
 
-    
-
     // data.setOptions({...data.options, nodes: textNodes})
 
-    return textNodes
+    return textNodes;
   }
 
   function generateMultiple(data) {
     // const textNodes = getSelectedTextNodes(data)
 
-    // console.log('test nodes');
     console.log(data);
-
-    
 
     // const content = "test 2"
 
@@ -221,5 +213,43 @@ export default function () {
   on(Panels.COMPONENT_VARIABLES.event, generateMultiple);
   on("GET_TEXT_LAYER_SELECTIONS", getSelectedTextNodes);
 
+  
+
   showUI(options, data);
+
+  figma.on('selectionchange', () => {
+
+    if (figma.currentPage.selection.length > 1) {
+      
+      // find nodes with fills that are of type SOLID
+    //   const selectedNodes = getSelectedNodesOrAllNodes();
+    console.log(figma.currentPage.selection);
+    
+    // console.log(figma.currentPage.selection);
+    console.log(getSelectedTextNodes({nodes: [...figma.currentPage.selection]}));
+    
+    
+
+    // sendSelectedNodes(getProvidedOrSelectedNodes(figma.currentPage.selection))
+    // const textNodes = [];
+
+    
+
+    // traverseNode(selectedNodes[0], function (node: SceneNode): void {
+    //   if (node.type === "TEXT") {
+    //     textNodes.push({
+    //       ...node,
+    //       id: node.id,
+    //       characters: node.characters,
+    //       name: node.name,
+    //     });
+    //   }
+    // })
+    // emit('GET_TEXT_LAYER_SELECTIONS')
+    } else {
+      console.log('Select at least 2 layers')
+    }
+  })
+
+  // figma.on("selectionchange", () => { console.log("changed") })
 }

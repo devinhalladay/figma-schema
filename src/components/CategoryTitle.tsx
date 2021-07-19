@@ -10,14 +10,13 @@ import styles from "../styles.module.css";
 
 interface ICategoryRow {
   panel: PanelData;
-  icon: any;
 }
 
-export default function CategoryTitle({ panel, icon }: ICategoryRow) {
+export default function CategoryTitle({ panel }: ICategoryRow) {
   return (
     <div className={styles.rowContents}>
       <div className={styles.inlineCenter}>
-        <div className={styles.box}>{icon}</div>
+        <div className={styles.box}>{panel.icon}</div>
         <Stack space="extraSmall">
           <Text bold>{panel.name}</Text>
           <Text muted>{panel.summary}</Text>

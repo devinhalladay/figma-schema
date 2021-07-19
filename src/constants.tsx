@@ -1,58 +1,70 @@
+import { IconSearchLarge32 } from "@create-figma-plugin/ui";
+import { createContext, Fragment, h, JSX } from "preact";
+import { ReactElement, ReactNode } from "react";
+import VariablesIcon from "./assets/variables.svg";
+import TimeIcon from "./components/Icons/TimeIcon";
+import VariableIcon from "./components/Icons/VariableIcon";
+
 export interface PanelData {
   name: string;
   summary: string;
   event: string;
+  icon: ReactNode | null;
 }
 
 export const Panels = {
   USERS: {
     name: "Users",
     summary: "Complete user profiles",
-    event: "GENERATE_USER_PROFILE"
+    event: "GENERATE_USER_PROFILE",
   },
   NAMES: {
     name: "Names",
     summary: "Male, Female, and Neutral",
     event: "GENERATE_RANDOM_NAMES",
+    icon: <IconSearchLarge32 />,
   },
   COMPONENT_VARIABLES: {
     name: "Component Variables",
     summary: "Fill multiple variables",
-    event: "GET_COMPONENT_VARIABLES"
+    event: "GET_COMPONENT_VARIABLES",
+    icon: <VariableIcon />,
   },
   CUSTOM_LIST: {
     name: "Create a custom list",
     summary: "Add a list of your own content",
-    event: "GET_CUSTOM_LIST"
+    event: "GET_CUSTOM_LIST",
+    icon: <VariableIcon />,
   },
   TIMES: {
     name: "Times",
     summary: "Spaced, Random, and Time Zones",
     event: "GENERATE_RANDOM_TIMES",
+    icon: <TimeIcon />,
   },
   ORGANIZATIONS: {
     name: "Organizations",
     summary: "Publications, Brands, Websites",
-    event: "GENERATE_ORGANIZATIONS"
+    event: "GENERATE_ORGANIZATIONS",
   },
   NUMBERS: {
     name: "Numbers",
     summary: "Prices, Percentages, Random Numbers",
-    event: "GENERATE_NUMBERS"
+    event: "GENERATE_NUMBERS",
   },
   API: {
     name: "API Integration",
     summary: "Connect a data source to your designs",
-    event: "GENERATE_API_REQUEST"
+    event: "GENERATE_API_REQUEST",
   },
   CONTACT_INFORMATION: {
     name: "Contact Information",
     summary: "Emails, Phone Numbers, Addresses",
-    event: "GENERATE_CONTACT_INFO"
+    event: "GENERATE_CONTACT_INFO",
   },
   TRENDING_TOPICS: {
     name: "Trending Topics",
     summary: "Hashtags or keywords trending on the internet",
-    event: "GENERATE_TRENDS"
-  }
+    event: "GENERATE_TRENDS",
+  },
 };
