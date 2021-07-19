@@ -1,16 +1,12 @@
-import { IconSearchLarge32 } from "@create-figma-plugin/ui";
-import { createContext, Fragment, h, JSX } from "preact";
-import { ReactElement, ReactNode } from "react";
-import UsersIcon from "./components/Icons/UsersIcon";
+import { Fragment, h } from "preact";
+import { ReactNode } from "react";
 import TimeIcon from "./components/Icons/TimeIcon";
+import UsersIcon from "./components/Icons/UsersIcon";
 import VariableIcon from "./components/Icons/VariableIcon";
-import {
-  ComponentVariabelsPanel,
-  CustomListPanel,
-  NamePanel,
-  TimesPanel,
-} from "./ui";
-// import { ReactComponent as VariableIcon } from "./assets/variables.svg";
+import ComponentVariabelsPanel from "./components/Panel/ComponentVariablesPanel";
+import CustomListPanel from "./components/Panel/CustomListPanel";
+import NamePanel from "./components/Panel/NamesPanel";
+import TimesPanel from "./components/Panel/TimesPanel";
 
 export interface PanelData {
   name: string;

@@ -11,13 +11,21 @@ import CategoryTitle from "../CategoryTitle";
 import PanelFooter from "./components/Footer";
 import PanelNavbar from "./components/NavBar";
 
-export default function Panel({ panel, data, children }) {
+export default function Panel({
+  panel,
+  data,
+  children,
+  footerButtonAction,
+}) {
   const { openPanels, setOpenPanels } = useContext(PanelContext);
-
-  const [render, setRender] = useState(openPanels.includes(panel));
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
     if (openPanels.includes(panel)) setRender(true);
+
+    return function cleanup() {
+      setRender(false);
+    };
   }, [openPanels]);
 
   const onAnimationEnd = () => {
@@ -28,7 +36,7 @@ export default function Panel({ panel, data, children }) {
     render && (
       <div
         className={
-          openPanels.includes(panel)
+          render
             ? `${styles.panelExitActive} ${styles.panel}`
             : `${styles.panelEnterActive} ${styles.panel}`
         }
@@ -44,7 +52,11 @@ export default function Panel({ panel, data, children }) {
             <VerticalSpace space="medium" />
             {children}
           </div>
-          <PanelFooter panel={panel} data={data} />
+          <PanelFooter
+            panel={panel}
+            data={data}
+            footerButtonAction={footerButtonAction}
+          />
         </div>
       </div>
     )
