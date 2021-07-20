@@ -1,9 +1,8 @@
 {
   "extends": "@create-figma-plugin/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
     "baseUrl": ".",
-    "typeRoots": ["node_modules/@figma", "node_modules/@types", "src/@types"],
+    "typeRoots": ["node_modules/@figma", "node_modules/@types"],
     "jsxFragmentFactory": "Fragment",
     "lib": [
       "es6",
@@ -14,6 +13,6 @@
     "react": ["node_modules/preact/compat"],
     "react-dom": ["node_modules/preact/compat"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
 }
 
