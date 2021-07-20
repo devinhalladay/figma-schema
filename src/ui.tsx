@@ -35,7 +35,11 @@ function Plugin() {
         })} */}
 
       {Object.entries(Panels).map(([key, value]) => {
-        return value.element;
+        if (value.isEnabled) {
+          return value.element;
+        }
+
+        return;
       })}
 
       <div className={styles.container}>
@@ -43,7 +47,11 @@ function Plugin() {
           <OnboardingCard />
 
           {Object.entries(Panels).map(([key, value]) => {
-            return <CategoryRow panel={value} key={key} />;
+            if (value.isEnabled) {
+              return <CategoryRow panel={value} key={key} />;
+            }
+
+            return;
           })}
 
           <VerticalSpace space="medium" />
