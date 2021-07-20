@@ -4,6 +4,8 @@ import {
   Container,
   Dropdown,
   DropdownOption,
+  IconButton,
+  Inline,
   Text,
   VerticalSpace,
 } from "@create-figma-plugin/ui";
@@ -11,20 +13,36 @@ import { emit } from "@create-figma-plugin/utilities";
 import { h, JSX, Fragment } from "preact";
 import { useState } from "preact/hooks";
 import { TextLayerData } from "src/@types/Panel";
-import { Panels } from "src/constants";
+import { Panels } from "../../constants";
+import styles from "../../styles.module.css";
 import Panel from ".";
+import SliderIcon from "../Icons/SliderIcon";
+import HorizontalSpace from "../HorizontalSpace";
 
 export default function ComponentVariabelsPanel({ show }) {
-  const [options, setOptions] = useState({
-    value: "",
-    nodes: [],
-  });
+  const [selectedNodes, setSelectedNodes] = useState([]);
 
-  const typeOptions: Array<DropdownOption> = [
-    { value: "Names", event: Panels.NAMES.event },
-    { value: "Times", event: Panels.TIMES.event },
-    { value: "Custom List", event: Panels.CUSTOM_LIST.event },
-  ];
+  const optionGenerator = Object.entries(Panels).map(
+    ([key, value]) => {
+      return {
+        // children: (
+        //   <div className={styles.inlineCenter}>
+        //     {value.icon}
+        //     {value.name}
+        //   </div>
+        // ),
+        children: value.name,
+        value: value.name,
+        event: value.event,
+        panel: value,
+      };
+    }
+  );
+  // .filter((panel) => {
+  //   return panel.isVariableOption !== true;
+  // });
+
+  const typeOptions: Array<DropdownOption> = [...optionGenerator];
 
   const [selectedLayers, setSelectedLayers] = useState([]);
 
@@ -41,6 +59,7 @@ export default function ComponentVariabelsPanel({ show }) {
         let nodeCopy = {
           ...nodesCopy[nodeIndex],
         };
+
         nodeCopy.operation = typeOptions.find(
           (option) => option.value === event.currentTarget.value
         );
@@ -55,7 +74,7 @@ export default function ComponentVariabelsPanel({ show }) {
           ...node,
         };
 
-        nodeCopy.operation = typeOptions[0]; //works
+        nodeCopy.operation = typeOptions[0].event; //works
 
         setSelectedLayers(selectedLayers.concat(nodeCopy));
 
@@ -74,8 +93,9 @@ export default function ComponentVariabelsPanel({ show }) {
   }
 
   onmessage = (event) => {
-    setOptions({ ...options, nodes: event.data.pluginMessage.nodes });
-    console.log(event.data.pluginMessage);
+    setSelectedNodes(event.data.pluginMessage.nodes);
+    // setOptions({ ...options, nodes: event.data.pluginMessage.nodes });/
+    // console.log(event.data.pluginMessage);
 
     // console.log(options.nodes);
   };
@@ -90,14 +110,26 @@ export default function ComponentVariabelsPanel({ show }) {
     });
   }
 
+  const [showOptions, setShowOptions] = useState(false);
+
+  const [selectedOption, setSelectedOption] = useState(
+    typeOptions[0]
+  );
+
+  function handleShowOptions(
+    event: JSX.TargetedEvent<HTMLInputElement>
+  ) {
+    setShowOptions(event.currentTarget.checked);
+  }
+
   return (
     <Panel
       panel={Panels.COMPONENT_VARIABLES}
       data={selectedLayers}
       show={show}>
       <Container space="small">
-        {options.nodes.length > 0 &&
-          options.nodes.map((node, i) => {
+        {selectedNodes.length > 0 &&
+          selectedNodes.map((node, i) => {
             return (
               <>
                 <Checkbox
@@ -112,35 +144,61 @@ export default function ComponentVariabelsPanel({ show }) {
                   (layer) => layer.id === node.id
                 ) && (
                   <>
-                    <Dropdown
-                      onChange={(
-                        e: JSX.TargetedEvent<HTMLInputElement>
-                      ) => {
-                        let nodeIndex = selectedLayers.findIndex(
-                          (layer) => layer.id === node.id
-                        );
-                        let nodesCopy = [...selectedLayers];
-                        let nodeCopy = {
-                          ...nodesCopy[nodeIndex],
-                        };
-                        nodeCopy.operation = typeOptions.find(
-                          (option) =>
-                            option.value === e.currentTarget.value
-                        );
+                    <div className={styles.inlineCenter}>
+                      <div className={styles.extend}>
+                        <Dropdown
+                          // icon={
+                          //   typeOptions.find(
+                          //     (option) =>
+                          //       option.value == selectedOption.value
+                          //   ).panel.icon
+                          // }
+                          onChange={(
+                            e: JSX.TargetedEvent<HTMLInputElement>
+                          ) => {
+                            // console.log(e.currentTarget.value);
 
-                        nodesCopy[nodeIndex] = nodeCopy;
+                            let nodeIndex = selectedLayers.findIndex(
+                              (layer) => layer.id === node.id
+                            );
+                            let nodesCopy = [...selectedLayers];
+                            let nodeCopy = {
+                              ...nodesCopy[nodeIndex],
+                            };
 
-                        setSelectedLayers(nodesCopy);
+                            nodeCopy.operation = typeOptions.find(
+                              (option) =>
+                                option.value === e.currentTarget.value
+                            ).event;
+                            // console.log(nodeCopy.operation);
 
-                        console.log(selectedLayers);
-                      }}
-                      options={typeOptions}
-                      value={
-                        selectedLayers.find(
-                          (layer) => layer.id === node.id
-                        ).operation.value
-                      }
-                    />
+                            nodesCopy[nodeIndex] = nodeCopy;
+                            setSelectedLayers(nodesCopy);
+                            console.log(selectedLayers);
+                            // setSelectedOption(
+                            //   typeOptions.find(
+                            //     (option) =>
+                            //       option.value ===
+                            //       e.currentTarget.value
+                            //   )
+                            // );
+                          }}
+                          options={typeOptions}
+                          value={
+                            typeOptions.find(
+                              (option) =>
+                                option.event === node.operation
+                            )?.value || typeOptions[0].value
+                          }
+                        />
+                      </div>
+                      <HorizontalSpace space="extraSmall" />
+                      <IconButton
+                        value={showOptions}
+                        onChange={handleShowOptions}>
+                        <SliderIcon />
+                      </IconButton>
+                    </div>
                     <VerticalSpace space="small" />
                   </>
                 )}

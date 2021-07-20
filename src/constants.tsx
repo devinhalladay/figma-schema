@@ -16,6 +16,7 @@ export interface PanelData {
   icon: ReactNode | null;
   isEnabled: Boolean;
   element?: ReactElement;
+  isVariableOption?: Boolean;
 }
 
 export const Panels = {
@@ -33,6 +34,7 @@ export const Panels = {
     icon: <UsersIcon />,
     element: <NamePanel />,
     isEnabled: true,
+    isVariableOption: true,
   },
   COMPONENT_VARIABLES: {
     name: "Component Variables",
@@ -57,6 +59,7 @@ export const Panels = {
     icon: <TimeIcon />,
     element: <TimesPanel />,
     isEnabled: true,
+    isVariableOption: true,
   },
   ORGANIZATIONS: {
     name: "Organizations",

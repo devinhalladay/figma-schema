@@ -118,6 +118,10 @@
   width: var(--space-extra-small);
 }
 
+.extend {
+  flex: 1
+}
+
 .small {
   width: var(--space-small);
 }
