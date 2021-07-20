@@ -14,7 +14,7 @@ import { TextLayerData } from "src/@types/Panel";
 import { Panels } from "src/constants";
 import Panel from ".";
 
-export default function ComponentVariabelsPanel() {
+export default function ComponentVariabelsPanel({ show }) {
   const [options, setOptions] = useState({
     value: "",
     nodes: [],
@@ -91,7 +91,10 @@ export default function ComponentVariabelsPanel() {
   }
 
   return (
-    <Panel panel={Panels.COMPONENT_VARIABLES} data={selectedLayers}>
+    <Panel
+      panel={Panels.COMPONENT_VARIABLES}
+      data={selectedLayers}
+      show={show}>
       <Container space="small">
         {options.nodes.length > 0 &&
           options.nodes.map((node, i) => {

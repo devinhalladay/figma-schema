@@ -11,32 +11,25 @@ import CategoryTitle from "../CategoryTitle";
 import PanelFooter from "./components/Footer";
 import PanelNavbar from "./components/NavBar";
 
-export default function Panel({
-  panel,
-  data,
-  children,
-  footerButtonAction,
-}) {
+export default function Panel({ panel, data, children, show }) {
   const { openPanels, setOpenPanels } = useContext(PanelContext);
-  const [render, setRender] = useState(false);
+  // let show = openPanels.includes(panel);
+
+  const [shouldRender, setRender] = useState(show);
 
   useEffect(() => {
-    if (openPanels.includes(panel)) setRender(true);
-
-    return function cleanup() {
-      setRender(false);
-    };
-  }, [openPanels]);
+    if (show) setRender(true);
+  }, [show]);
 
   const onAnimationEnd = () => {
-    if (!openPanels.includes(panel)) setRender(false);
+    if (!show) setRender(false);
   };
 
   return (
-    render && (
+    shouldRender && (
       <div
         className={
-          render
+          show
             ? `${styles.panelExitActive} ${styles.panel}`
             : `${styles.panelEnterActive} ${styles.panel}`
         }
@@ -52,11 +45,7 @@ export default function Panel({
             <VerticalSpace space="medium" />
             {children}
           </div>
-          <PanelFooter
-            panel={panel}
-            data={data}
-            footerButtonAction={footerButtonAction}
-          />
+          <PanelFooter panel={panel} data={data} />
         </div>
       </div>
     )

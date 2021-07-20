@@ -15,7 +15,7 @@ import Panel from ".";
 import LabeledInputGroup from "../LabeledInputGroup";
 import LabeledSwitch from "../LabeledSwitch";
 
-export default function NamePanel() {
+export default function NamePanel({ show }) {
   const options: Array<DropdownOption> = [
     { value: "Any" },
     { value: "Male" },
@@ -40,7 +40,7 @@ export default function NamePanel() {
   ];
 
   return (
-    <Panel panel={Panels.NAMES} data={nameOptions}>
+    <Panel panel={Panels.NAMES} data={nameOptions} show={show}>
       <Container>
         <LabeledInputGroup title="Gender association">
           <Dropdown

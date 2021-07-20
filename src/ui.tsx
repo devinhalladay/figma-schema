@@ -1,5 +1,5 @@
 import { render, VerticalSpace } from "@create-figma-plugin/ui";
-import { createContext, Fragment, h } from "preact";
+import { cloneElement, createContext, Fragment, h } from "preact";
 import { useState } from "preact/hooks";
 import CategoryRow from "./components/CategoryRow";
 import OnboardingCard from "./components/OnboardingCard";
@@ -7,7 +7,7 @@ import { PanelData, Panels } from "./constants";
 import styles from "./styles.module.css";
 
 interface PanelContextProps {
-  openPanels: PanelData[] | null;
+  openPanels: PanelData[] | Array<any>;
   setOpenPanels: any;
 }
 
@@ -36,7 +36,11 @@ function Plugin() {
 
       {Object.entries(Panels).map(([key, value]) => {
         if (value.isEnabled) {
-          return value.element;
+          // return value.element;
+
+          return cloneElement(value.element, {
+            show: openPanels.includes(value),
+          });
         }
 
         return;

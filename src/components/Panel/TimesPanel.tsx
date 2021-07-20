@@ -16,7 +16,7 @@ import Panel from ".";
 import styles from "../../styles.module.css";
 import { TimeData } from "src/@types/Panel";
 
-export default function TimesPanel() {
+export default function TimesPanel({ show }) {
   const [startTime, setStartTime] = useState<TimeData>({
     enabled: false,
     time: {
@@ -96,7 +96,8 @@ export default function TimesPanel() {
   return (
     <Panel
       panel={Panels.TIMES}
-      data={{ ...startTime, interval: interval }}>
+      data={{ ...startTime, interval: interval }}
+      show={show}>
       <Container space="small">
         <LabeledInputGroup title="Constraints">
           <LabeledSwitch

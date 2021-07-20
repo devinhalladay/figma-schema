@@ -5,11 +5,11 @@ import { Panels } from "src/constants";
 import Panel from ".";
 import LabeledInputGroup from "../LabeledInputGroup";
 
-export default function CustomListPanel() {
+export default function CustomListPanel({ show }) {
   const [options, setOptions] = useState({ value: "" });
 
   return (
-    <Panel panel={Panels.CUSTOM_LIST} data={options}>
+    <Panel panel={Panels.CUSTOM_LIST} data={options} show={show}>
       <Container space="small">
         <LabeledInputGroup title="Enter your list">
           <TextboxMultiline
