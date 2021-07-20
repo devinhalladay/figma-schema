@@ -14,9 +14,10 @@ import LabeledSwitch from "../LabeledSwitch";
 import { Panels } from "../../constants";
 import Panel from ".";
 import styles from "../../styles.module.css";
+import { TimeData } from "src/@types/Panel";
 
 export default function TimesPanel() {
-  const [startTime, setStartTime] = useState({
+  const [startTime, setStartTime] = useState<TimeData>({
     enabled: false,
     time: {
       hour: "10",

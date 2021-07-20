@@ -1,28 +1,32 @@
 import {
   emit,
   getSceneNodeById,
-  getSelectedNodesOrAllNodes, on,
-  showUI, traverseNode
+  getSelectedNodesOrAllNodes,
+  on,
+  showUI,
+  traverseNode
 } from "@create-figma-plugin/utilities";
 import faker from "faker";
 import moment, { Moment } from "moment";
+import { NameData, TimeData } from "./@types/Panel";
 import { Panels } from "./constants";
 
 export default function () {
   const options = { width: 300, height: 500 };
-  const nameData = { greeting: "Hello, World!" };
 
   function replaceNodesContent(
     nodes: SceneNode[],
     content: string | number | string[],
-    random: Boolean | undefined
+    random?: Boolean
   ) {
     nodes.forEach((node, i) => {
-      let index = i
+      let index = i;
       if (node.type === "TEXT") {
         figma.loadFontAsync(node.fontName as FontName).then(() => {
           if (Array.isArray(content)) {
-            index = random ? Math.floor(Math.random()*content.length) : index
+            index = random
+              ? Math.floor(Math.random() * content.length)
+              : index;
             node.characters = content[index];
           } else {
             node.characters = content.toString();
@@ -44,8 +48,8 @@ export default function () {
     return nodes;
   }
 
-  function randomName(nameData) {
-    let nodes = getProvidedOrSelectedNodes(nameData)
+  function randomName(nameData: NameData) {
+    let nodes = getProvidedOrSelectedNodes(nameData);
 
     function nameFactory(gender: undefined | number) {
       let nameParts = [];
@@ -104,10 +108,9 @@ export default function () {
 
   let data;
 
-  function generateTimeTable(data) {
-    
+  function generateTimeTable(data: TimeData) {
     let nodes = getProvidedOrSelectedNodes(data);
-    
+
     data = {
       time: {
         hour: 10,
@@ -126,8 +129,6 @@ export default function () {
 
     // Swap AM/PM if needed
     start = setMeridiem(start, data.amPm);
-
-    
 
     // To locale string
     let startTime = moment(start).format("LT");
@@ -181,10 +182,7 @@ export default function () {
           });
         }
       });
-    })
-    
-
-    
+    });
 
     sendSelectedNodes(textNodes);
 
@@ -197,10 +195,11 @@ export default function () {
 
   function generateMultiple(data) {
     // const textNodes = getSelectedTextNodes(data)
+    // data.forEach(layer => {
+    //   emit(layer.operation, data)
+    // });
 
     console.log(data);
-
-    // const content = "test 2"
 
     // data.nodes.forEach((node, i) => {
     //   if (node.operation)
@@ -219,44 +218,16 @@ export default function () {
   on(Panels.TIMES.event, generateTimeTable);
   on(Panels.CUSTOM_LIST.event, generateCustomList);
   on(Panels.COMPONENT_VARIABLES.event, generateMultiple);
-  // on("GET_TEXT_LAYER_SELECTIONS", getSelectedTextNodes);
-
-  
 
   showUI(options, data);
 
-  figma.on('selectionchange', () => {
-
+  figma.on("selectionchange", () => {
     if (figma.currentPage.selection.length > 0) {
-      
-      // find nodes with fills that are of type SOLID
-    //   const selectedNodes = getSelectedNodesOrAllNodes();
-    
-    // console.log(figma.currentPage.selection);
-    getSelectedTextNodes({nodes: [...figma.currentPage.selection]});
-    
-    
-
-    // sendSelectedNodes(getProvidedOrSelectedNodes(figma.currentPage.selection))
-    // const textNodes = [];
-
-    
-
-    // traverseNode(selectedNodes[0], function (node: SceneNode): void {
-    //   if (node.type === "TEXT") {
-    //     textNodes.push({
-    //       ...node,
-    //       id: node.id,
-    //       characters: node.characters,
-    //       name: node.name,
-    //     });
-    //   }
-    // })
-    // emit('GET_TEXT_LAYER_SELECTIONS')
+      getSelectedTextNodes({
+        nodes: [...figma.currentPage.selection],
+      });
     } else {
-      console.log('Select at least 1 layer')
+      figma.notify("Select at least 1 layer")
     }
-  })
-
-  // figma.on("selectionchange", () => { console.log("changed") })
+  });
 }

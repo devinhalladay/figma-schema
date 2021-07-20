@@ -9,6 +9,7 @@ import {
 } from "@create-figma-plugin/ui";
 import { h, JSX, Fragment } from "preact";
 import { useState } from "preact/hooks";
+import { NameData } from "src/@types/Panel";
 import { Panels } from "src/constants";
 import Panel from ".";
 import LabeledInputGroup from "../LabeledInputGroup";
@@ -25,7 +26,7 @@ export default function NamePanel() {
     false
   );
 
-  const [nameOptions, setNameOptions] = useState({
+  const [nameOptions, setNameOptions] = useState<NameData>({
     gender: "Any",
     firstName: true,
     // middleName: false,

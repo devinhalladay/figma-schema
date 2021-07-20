@@ -10,6 +10,7 @@ import {
 import { emit } from "@create-figma-plugin/utilities";
 import { h, JSX, Fragment } from "preact";
 import { useState } from "preact/hooks";
+import { TextLayerData } from "src/@types/Panel";
 import { Panels } from "src/constants";
 import Panel from ".";
 
@@ -80,7 +81,7 @@ export default function ComponentVariabelsPanel() {
   };
 
   function dispatchAllEvents() {
-    selectedLayers.forEach((node) => {
+    selectedLayers.forEach((node: TextLayerData) => {
       if (node.operation) {
         console.log(node.operation);
 
@@ -90,7 +91,7 @@ export default function ComponentVariabelsPanel() {
   }
 
   return (
-    <Panel panel={Panels.COMPONENT_VARIABLES} data={options}>
+    <Panel panel={Panels.COMPONENT_VARIABLES} data={selectedLayers}>
       <Container space="small">
         {options.nodes.length > 0 &&
           options.nodes.map((node, i) => {

@@ -1,4 +1,5 @@
 import { Fragment, h } from "preact";
+import { ReactElement } from "react";
 import { ReactNode } from "react";
 import TimeIcon from "./components/Icons/TimeIcon";
 import UsersIcon from "./components/Icons/UsersIcon";
@@ -13,6 +14,8 @@ export interface PanelData {
   summary: string;
   event: string;
   icon: ReactNode | null;
+  isEnabled: Boolean;
+  element?: ReactElement;
 }
 
 export const Panels = {
