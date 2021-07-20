@@ -17,18 +17,12 @@ export default function () {
     content: string | number | string[],
     random: Boolean | undefined
   ) {
-    // nodes = sortNodesByCanonicalOrder(nodes).reverse();
-    console.log('cpmtemt');
-    console.log(content);
-    
-    
-
     nodes.forEach((node, i) => {
       let index = i
       if (node.type === "TEXT") {
         figma.loadFontAsync(node.fontName as FontName).then(() => {
           if (Array.isArray(content)) {
-            index = Math.floor(Math.random()*content.length)
+            index = random ? Math.floor(Math.random()*content.length) : index
             node.characters = content[index];
           } else {
             node.characters = content.toString();
@@ -169,15 +163,8 @@ export default function () {
     let nodes = getProvidedOrSelectedNodes(data);
     const textNodes = [];
 
-    console.log('selecte notedes');
-    
-    console.log(nodes);
-    
-
     nodes.forEach((node: SceneNode) => {
       traverseNode(node, function (child): void {
-        console.log(node);
-        
         if (node.type === "TEXT") {
           textNodes.push({
             ...node,
@@ -232,7 +219,7 @@ export default function () {
   on(Panels.TIMES.event, generateTimeTable);
   on(Panels.CUSTOM_LIST.event, generateCustomList);
   on(Panels.COMPONENT_VARIABLES.event, generateMultiple);
-  on("GET_TEXT_LAYER_SELECTIONS", getSelectedTextNodes);
+  // on("GET_TEXT_LAYER_SELECTIONS", getSelectedTextNodes);
 
   
 
@@ -244,10 +231,9 @@ export default function () {
       
       // find nodes with fills that are of type SOLID
     //   const selectedNodes = getSelectedNodesOrAllNodes();
-    console.log(figma.currentPage.selection);
     
     // console.log(figma.currentPage.selection);
-    console.log(getSelectedTextNodes({nodes: [...figma.currentPage.selection]}));
+    getSelectedTextNodes({nodes: [...figma.currentPage.selection]});
     
     
 
