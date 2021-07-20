@@ -1,9 +1,4 @@
-import {
-  Container,
-  Stack,
-  Text,
-  VerticalSpace,
-} from "@create-figma-plugin/ui";
+import { Stack, Text } from "@create-figma-plugin/ui";
 import { Fragment, h } from "preact";
 import { PanelData } from "../constants";
 import styles from "../styles.module.css";
