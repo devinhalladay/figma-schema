@@ -23,7 +23,7 @@ export default function NamePanel({ show }) {
   ];
 
   const [showLastNameOptions, setShowLastNameOptions] = useState(
-    false
+    true
   );
 
   const [nameOptions, setNameOptions] = useState<NameData>({

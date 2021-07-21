@@ -51,6 +51,9 @@ export default function () {
   function randomName(nameData: NameData) {
     let nodes = getProvidedOrSelectedNodes(nameData);
 
+    console.log(nameData);
+    
+
     function nameFactory(gender: undefined | number) {
       let nameParts = [];
 

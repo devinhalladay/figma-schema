@@ -43,7 +43,7 @@ export const Panels = {
     event: "GET_COMPONENT_VARIABLES",
     icon: <VariableIcon />,
     element: <ComponentVariabelsPanel />,
-    isEnabled: true,
+    isEnabled: false,
     isVariableOption: false,
   },
   CUSTOM_LIST: {
