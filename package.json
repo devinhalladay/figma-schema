@@ -6,6 +6,7 @@
     "@types/faker": "^5.5.7",
     "@types/react": "^17.0.14",
     "faker": "^5.5.3",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "phosphor-react": "^1.3.1",
     "preact": "^10.5.14",
@@ -17,6 +18,7 @@
     "@create-figma-plugin/build": "^1.2.2",
     "@create-figma-plugin/tsconfig": "^1.2.2",
     "@figma/plugin-typings": "^1",
+    "@types/lodash": "^4.14.171",
     "typescript": "^4",
     "typescript-plugin-css-modules": "^3.4.0"
   },
