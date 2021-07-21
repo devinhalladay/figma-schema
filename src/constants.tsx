@@ -26,6 +26,7 @@ export const Panels = {
     event: "GENERATE_USER_PROFILE",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
   NAMES: {
     name: "Names",
@@ -43,6 +44,7 @@ export const Panels = {
     icon: <VariableIcon />,
     element: <ComponentVariabelsPanel />,
     isEnabled: true,
+    isVariableOption: false,
   },
   CUSTOM_LIST: {
     name: "Create a custom list",
@@ -51,6 +53,7 @@ export const Panels = {
     icon: <VariableIcon />,
     element: <CustomListPanel />,
     isEnabled: true,
+    isVariableOption: false,
   },
   TIMES: {
     name: "Times",
@@ -67,6 +70,7 @@ export const Panels = {
     event: "GENERATE_ORGANIZATIONS",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
   NUMBERS: {
     name: "Numbers",
@@ -74,6 +78,7 @@ export const Panels = {
     event: "GENERATE_NUMBERS",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
   API: {
     name: "API Integration",
@@ -81,6 +86,7 @@ export const Panels = {
     event: "GENERATE_API_REQUEST",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
   CONTACT_INFORMATION: {
     name: "Contact Information",
@@ -88,6 +94,7 @@ export const Panels = {
     event: "GENERATE_CONTACT_INFO",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
   TRENDING_TOPICS: {
     name: "Trending Topics",
@@ -95,5 +102,6 @@ export const Panels = {
     event: "GENERATE_TRENDS",
     icon: null,
     isEnabled: false,
+    isVariableOption: false,
   },
 };

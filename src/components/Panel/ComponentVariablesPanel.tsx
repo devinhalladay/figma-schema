@@ -31,22 +31,19 @@ export default function ComponentVariabelsPanel({ show }) {
 
   const { openPanels, setOpenPanels } = useContext(PanelContext);
 
-  // .filter((panel) => {
-  //   return panel.isVariableOption !== true;
-  // });
+  console.log(Object.values(Panels));
 
-  const typeOptions: Array<CustomDropdownOption> = Object.entries(
+  const typeOptions: Array<CustomDropdownOption> = Object.values(
     Panels
-  ).map(([key, value]) => {
-    return {
-      operation: value.event,
-      value: value.name,
-    };
-  });
+  )
+    .filter((panel) => {
+      return panel.isVariableOption === true;
+    })
+    .map((panel) => {
+      return { operation: panel.event, value: panel.name };
+    });
 
-  const [selectedLayers, setSelectedLayers] = useState([]);
-
-  const [selectionState, setSelectionState] = useState({});
+  const [selectedLayers, setSelectedLayers] = useState({});
 
   function handleDropdownChange(
     e: JSX.TargetedEvent<HTMLInputElement>,
@@ -56,8 +53,8 @@ export default function ComponentVariabelsPanel({ show }) {
       (option) => option.value === e.currentTarget.value
     );
 
-    setSelectionState({
-      ...selectionState,
+    setSelectedLayers({
+      ...selectedLayers,
       [node.id]: {
         ...selected,
         ...node,
@@ -70,16 +67,14 @@ export default function ComponentVariabelsPanel({ show }) {
     node: SceneNode | Node
   ) {
     if (event.currentTarget.checked) {
-      setSelectionState({
-        ...selectionState,
+      setSelectedLayers({
+        ...selectedLayers,
         [node.id]: { ...typeOptions[0], ...node },
       });
-
-      console.log(selectionState);
     } else {
-      let temp = { ...selectionState };
+      let temp = { ...selectedLayers };
       delete temp[node.id];
-      setSelectionState(temp);
+      setSelectedLayers(temp);
     }
   }
 
@@ -88,19 +83,9 @@ export default function ComponentVariabelsPanel({ show }) {
   };
 
   function dispatchAllEvents() {
-    Object.values(selectionState).forEach((selection) => {
-      console.log(selection);
-
+    Object.values(selectedLayers).forEach((selection) => {
       emit(selection.operation, selection);
     });
-  }
-
-  const [showOptions, setShowOptions] = useState(false);
-
-  function handleShowOptions(
-    event: JSX.TargetedEvent<HTMLInputElement>
-  ) {
-    setShowOptions(event.currentTarget.checked);
   }
 
   return (
@@ -115,11 +100,11 @@ export default function ComponentVariabelsPanel({ show }) {
               <>
                 <Checkbox
                   onChange={(e) => handleCheckboxChange(e, node)}
-                  value={node.id in selectionState}>
+                  value={node.id in selectedLayers}>
                   <Text>{node.name}</Text>
                 </Checkbox>
                 <VerticalSpace space="small" />
-                {node.id in selectionState && (
+                {node.id in selectedLayers && (
                   <>
                     <div className={styles.inlineCenter}>
                       <div className={styles.extend}>
@@ -128,21 +113,21 @@ export default function ComponentVariabelsPanel({ show }) {
                             handleDropdownChange(e, node)
                           }
                           options={typeOptions}
-                          value={selectionState[node.id].value}
+                          value={selectedLayers[node.id].value}
                         />
                       </div>
 
                       <HorizontalSpace space="extraSmall" />
 
                       <IconButton
-                        value={showOptions}
+                        value={true}
                         onChange={() => {
                           setOpenPanels([
                             ...openPanels,
                             Object.values(Panels).find((panel) => {
                               return (
                                 panel.event ===
-                                selectionState[node.id].operation
+                                selectedLayers[node.id].operation
                               );
                             }),
                           ]);
