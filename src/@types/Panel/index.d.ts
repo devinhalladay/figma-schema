@@ -2,9 +2,9 @@ export type NameInitialOptions = 'Full' | 'Initial'
 
 export interface NameData {
   gender?: string,
-  firstName: Boolean,
-  middleName?: Boolean,
-  lastName: Boolean,
+  firstName: boolean,
+  middleName?: boolean,
+  lastName: boolean,
   lastInitial: NameInitialOptions,
 }
 

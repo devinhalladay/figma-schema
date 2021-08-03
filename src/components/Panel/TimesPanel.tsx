@@ -7,7 +7,7 @@ import {
   VerticalSpace,
 } from "@create-figma-plugin/ui";
 import { h, JSX } from "preact";
-import { useState } from "preact/hooks";
+import { useContext, useState } from "preact/hooks";
 import HorizontalSpace from "../HorizontalSpace";
 import LabeledInputGroup from "../LabeledInputGroup";
 import LabeledSwitch from "../LabeledSwitch";
@@ -15,8 +15,10 @@ import { Panels } from "../../constants";
 import Panel from ".";
 import styles from "../../styles.module.css";
 import { TimeData } from "src/@types/Panel";
+import { PanelContext } from "src/ui";
 
 export default function TimesPanel({ show }) {
+  const { openPanels } = useContext(PanelContext);
   const [startTime, setStartTime] = useState<TimeData>({
     enabled: false,
     time: {
@@ -25,6 +27,8 @@ export default function TimesPanel({ show }) {
     },
     amPm: "AM",
   });
+
+  const zIndex = openPanels.indexOf(Panels.TIMES) + 100;
 
   const [interval, setInterval] = useState("30 mins");
 
@@ -97,7 +101,8 @@ export default function TimesPanel({ show }) {
     <Panel
       panel={Panels.TIMES}
       data={{ ...startTime, interval: interval }}
-      show={show}>
+      show={show}
+      zIndex={zIndex}>
       <Container space="small">
         <LabeledInputGroup title="Constraints">
           <LabeledSwitch

@@ -14,9 +14,9 @@ export interface PanelData {
   summary: string;
   event: string;
   icon: ReactNode | null;
-  isEnabled: Boolean;
+  isEnabled: boolean;
   element?: ReactElement;
-  isVariableOption?: Boolean;
+  isVariableOption?: boolean;
 }
 
 export const Panels = {
@@ -43,7 +43,7 @@ export const Panels = {
     event: "GET_COMPONENT_VARIABLES",
     icon: <VariableIcon />,
     element: <ComponentVariabelsPanel />,
-    isEnabled: false,
+    isEnabled: true,
     isVariableOption: false,
   },
   CUSTOM_LIST: {

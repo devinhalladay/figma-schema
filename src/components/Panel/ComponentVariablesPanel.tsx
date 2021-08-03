@@ -26,10 +26,15 @@ type CustomDropdownOption = DropdownOption & {
   // panel: PanelData;
 };
 
-export default function ComponentVariabelsPanel({ show }) {
+export default function ComponentVariabelsPanel({ show, zIndex }) {
   const [currentSelection, setCurrentSelection] = useState([]);
 
-  const { openPanels, setOpenPanels } = useContext(PanelContext);
+  const {
+    openPanels,
+    setOpenPanels,
+    setZIndexTracker,
+    zIndexTracker,
+  } = useContext(PanelContext);
 
   console.log(Object.values(Panels));
 
@@ -49,7 +54,7 @@ export default function ComponentVariabelsPanel({ show }) {
     e: JSX.TargetedEvent<HTMLInputElement>,
     node: SceneNode | Node
   ) {
-    let selected = typeOptions.find(
+    const selected = typeOptions.find(
       (option) => option.value === e.currentTarget.value
     );
 
@@ -72,7 +77,7 @@ export default function ComponentVariabelsPanel({ show }) {
         [node.id]: { ...typeOptions[0], ...node },
       });
     } else {
-      let temp = { ...selectedLayers };
+      const temp = { ...selectedLayers };
       delete temp[node.id];
       setSelectedLayers(temp);
     }
@@ -92,7 +97,8 @@ export default function ComponentVariabelsPanel({ show }) {
     <Panel
       panel={Panels.COMPONENT_VARIABLES}
       data={selectedLayers}
-      show={show}>
+      show={show}
+      zIndex={zIndex}>
       <Container space="small">
         {currentSelection.length > 0 &&
           currentSelection.map((node, i) => {
@@ -122,6 +128,15 @@ export default function ComponentVariabelsPanel({ show }) {
                       <IconButton
                         value={true}
                         onChange={() => {
+                          setZIndexTracker([
+                            ...zIndexTracker,
+                            Object.values(Panels).find((panel) => {
+                              return (
+                                panel.event ===
+                                selectedLayers[node.id].operation
+                              );
+                            }),
+                          ]);
                           setOpenPanels([
                             ...openPanels,
                             Object.values(Panels).find((panel) => {

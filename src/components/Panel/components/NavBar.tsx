@@ -6,10 +6,11 @@ import {
 } from "@create-figma-plugin/ui";
 import { Fragment, h } from "preact";
 import { useContext } from "preact/hooks";
+import { PanelData, Panels } from "../../../constants";
 import { PanelContext } from "src/ui";
 import styles from "../../../styles.module.css";
 
-export default function PanelNavbar() {
+export default function PanelNavbar({ panel }) {
   const { openPanels, setOpenPanels } = useContext(PanelContext);
 
   return (
@@ -18,7 +19,13 @@ export default function PanelNavbar() {
         <VerticalSpace space="small" />
         <button
           className={styles.panelHeader}
-          onClick={() => setOpenPanels([])}>
+          onClick={() =>
+            setOpenPanels(
+              openPanels.filter(
+                (p: PanelData) => p.name !== panel.name
+              )
+            )
+          }>
           <svg
             className={styles.backIcon}
             width="12"

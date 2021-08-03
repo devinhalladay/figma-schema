@@ -11,8 +11,16 @@ import CategoryTitle from "../CategoryTitle";
 import PanelFooter from "./components/Footer";
 import PanelNavbar from "./components/NavBar";
 
-export default function Panel({ panel, data, children, show }) {
-  const { openPanels, setOpenPanels } = useContext(PanelContext);
+export default function Panel({
+  panel,
+  data,
+  children,
+  show,
+  // zIndex,
+}) {
+  const { openPanels, setOpenPanels, zIndexTracker } = useContext(
+    PanelContext
+  );
   // let show = openPanels.includes(panel);
 
   const [shouldRender, setRender] = useState(show);
@@ -33,9 +41,12 @@ export default function Panel({ panel, data, children, show }) {
             ? `${styles.panelExitActive} ${styles.panel}`
             : `${styles.panelEnterActive} ${styles.panel}`
         }
+        style={{
+          zIndex: zIndexTracker.lastIndexOf(panel) + 100,
+        }}
         onAnimationEnd={onAnimationEnd}>
         <div className={styles.container}>
-          <PanelNavbar />
+          <PanelNavbar panel={panel} />
           <div className={styles.main}>
             <Container>
               <CategoryTitle panel={panel} />

@@ -12,14 +12,20 @@ interface ICategoryRow {
 }
 
 export default function CategoryRow({ panel }: ICategoryRow) {
-  const { openPanels, setOpenPanels } = useContext(PanelContext);
+  const {
+    openPanels,
+    setOpenPanels,
+    setZIndexTracker,
+    zIndexTracker,
+  } = useContext(PanelContext);
 
   return (
     <div className={styles.row}>
       <Container
         onClick={() => {
-          setOpenPanels([...openPanels, panel]);
-          console.log(openPanels);
+          setOpenPanels([panel, ...openPanels]);
+          setZIndexTracker([...zIndexTracker, panel]);
+          console.log(zIndexTracker);
         }}>
         <div className={styles.rowContents}>
           <CategoryTitle panel={panel} />

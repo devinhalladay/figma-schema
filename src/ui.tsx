@@ -9,12 +9,16 @@ import styles from "./styles.module.css";
 interface PanelContextProps {
   openPanels: PanelData[] | Array<any>;
   setOpenPanels: any;
+  zIndexTracker: number[];
+  setZIndexTracker: any;
 }
 
 export const PanelContext = createContext<Partial<PanelContextProps>>(
   {
     openPanels: [],
     setOpenPanels: null,
+    setZIndexTracker: null,
+    zIndexTracker: [],
   }
 );
 
@@ -23,11 +27,17 @@ function Plugin() {
     []
   );
 
+  const [zIndexTracker, setZIndexTracker] = useState<Array<number>>(
+    []
+  );
+
   return (
     <PanelContext.Provider
       value={{
         openPanels: openPanels,
         setOpenPanels: setOpenPanels,
+        zIndexTracker: zIndexTracker,
+        setZIndexTracker: setZIndexTracker,
       }}>
       {/* {openPanels.length >= 1 &&
         openPanels.map((panel) => {
@@ -36,7 +46,8 @@ function Plugin() {
 
       {Object.entries(Panels).map(([key, value]) => {
         if (value.isEnabled) {
-          // return value.element;
+          // openPanels?.map(p, i => )
+          // zIndexTracker.push(openPanels.length + 101);
 
           return cloneElement(value.element, {
             show: openPanels.includes(value),

@@ -17,7 +17,7 @@ export default function () {
   function replaceNodesContent(
     nodes: SceneNode[],
     content: string | number | string[],
-    random?: Boolean
+    random?: boolean
   ) {
     nodes.forEach((node, i) => {
       let index = i;
@@ -49,13 +49,13 @@ export default function () {
   }
 
   function randomName(nameData: NameData) {
-    let nodes = getProvidedOrSelectedNodes(nameData);
+    const nodes = getProvidedOrSelectedNodes(nameData);
 
     console.log(nameData);
     
 
     function nameFactory(gender: undefined | number) {
-      let nameParts = [];
+      const nameParts = [];
 
       if (nameData.firstName) {
         nameParts.push(faker.name.firstName(gender));
@@ -76,19 +76,19 @@ export default function () {
       return nameParts.join(" ");
     }
 
-    let namesList = [];
+    const namesList = [];
 
     if (nameData.gender == "Any" || nameData.gender === undefined) {
       for (let i = 0; i < nodes.length; i++) {
-        let name = nameFactory(undefined);
+        const name = nameFactory(undefined);
 
         namesList.push(name);
       }
     } else if (nameData.gender) {
-      let gender = nameData.gender === "Male" ? 0 : 1; // Male = 0, Female = 1
+      const gender = nameData.gender === "Male" ? 0 : 1; // Male = 0, Female = 1
 
       for (let i = 0; i < nodes.length; i++) {
-        let name = nameFactory(gender);
+        const name = nameFactory(gender);
         namesList.push(name);
       }
     }
@@ -112,7 +112,7 @@ export default function () {
   let data;
 
   function generateTimeTable(data: TimeData) {
-    let nodes = getProvidedOrSelectedNodes(data);
+    const nodes = getProvidedOrSelectedNodes(data);
 
     data = {
       time: {
@@ -123,7 +123,7 @@ export default function () {
       interval: "30",
     };
 
-    let interval = data.interval.replace(/\D/g, "");
+    const interval = data.interval.replace(/\D/g, "");
 
     // Get current time, replace hours and minutes with input value
     let start = moment()
@@ -134,14 +134,14 @@ export default function () {
     start = setMeridiem(start, data.amPm);
 
     // To locale string
-    let startTime = moment(start).format("LT");
+    const startTime = moment(start).format("LT");
 
     // Pre-populate start time
-    let timeStops = [startTime];
+    const timeStops = [startTime];
 
     // Add interval for every layer selected
     for (let i = 0; i < nodes.length; i++) {
-      let newTime = start.add(interval, "minutes").format("LT");
+      const newTime = start.add(interval, "minutes").format("LT");
       timeStops.push(newTime);
     }
 
@@ -149,7 +149,7 @@ export default function () {
   }
 
   function generateCustomList(data) {
-    let nodes = getProvidedOrSelectedNodes(data);
+    const nodes = getProvidedOrSelectedNodes(data);
 
     const placeholders = data.value.split("\n");
 
@@ -164,7 +164,7 @@ export default function () {
   }
 
   function getSelectedTextNodes(data) {
-    let nodes = getProvidedOrSelectedNodes(data);
+    const nodes = getProvidedOrSelectedNodes(data);
     const textNodes = [];
 
     nodes.forEach((node: SceneNode) => {

@@ -54,6 +54,7 @@
 }
 .panelEnterActive {
   left: 300px;
+  z-index: 900;
   transition: left 200ms;
   animation: 300ms moveOut;
 }
